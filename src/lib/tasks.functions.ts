@@ -10,6 +10,25 @@ const ExtractedTask = z.object({
   deadline: z.string().nullable().optional(),
 });
 
+const ExtractedPlan = z.object({
+  title: z.string().min(1).default("Untitled chat"),
+  tasks: z.array(ExtractedTask).default([]),
+});
+
+function parseExtractedPlan(text: string) {
+  const cleaned = text
+    .trim()
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/```$/i, "")
+    .trim();
+  const firstBrace = cleaned.indexOf("{");
+  const lastBrace = cleaned.lastIndexOf("}");
+  if (firstBrace === -1 || lastBrace === -1 || lastBrace <= firstBrace) {
+    throw new Error("AI response did not contain a JSON object");
+  }
+  return ExtractedPlan.parse(JSON.parse(cleaned.slice(firstBrace, lastBrace + 1)));
+}
+
 export const extractTasks = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
@@ -19,20 +38,19 @@ export const extractTasks = createServerFn({ method: "POST" })
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) throw new Error("Missing LOVABLE_API_KEY");
 
-    const { generateText, Output } = await import("ai");
+    const { generateText } = await import("ai");
     const { createLovableAiGatewayProvider } = await import("./ai-gateway.server");
     const gateway = createLovableAiGatewayProvider(apiKey);
 
     const now = new Date().toISOString();
-    const { output } = await generateText({
+    const { text } = await generateText({
       model: gateway("google/gemini-3-flash-preview"),
-      output: Output.object({
-        schema: z.object({
-          title: z.string().describe("A short title summarizing this conversation, 3-7 words"),
-          tasks: z.array(ExtractedTask),
-        }),
-      }),
+      temperature: 0,
+      maxOutputTokens: 4096,
       prompt: `You extract actionable tasks, deadlines, and commitments from chat transcripts.
+
+Return only valid JSON, with no markdown fences or commentary. Shape:
+{"title":"short 3-7 word summary","tasks":[{"title":"task","details":null,"assignee":null,"said_by":null,"deadline":null}]}
 
 Current datetime (ISO): ${now}
 
@@ -51,7 +69,12 @@ ${data.text}
 """`,
     });
 
-    return output;
+    try {
+      return parseExtractedPlan(text);
+    } catch (error) {
+      console.error("Failed to parse extraction response", error);
+      throw new Error("The AI response could not be read. Try a shorter or clearer chat paste.");
+    }
   });
 
 export const saveSession = createServerFn({ method: "POST" })
