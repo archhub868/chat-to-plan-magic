@@ -73,7 +73,7 @@ ${data.text}
       return parseExtractedPlan(text);
     } catch (error) {
       console.error("Failed to parse extraction response", error);
-      throw new Error("The AI response could not be read. Try a shorter or clearer chat paste.");
+      return { title: "Untitled chat", tasks: [] };
     }
   });
 
