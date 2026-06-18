@@ -29,6 +29,11 @@ function parseExtractedPlan(text: string) {
   return ExtractedPlan.parse(JSON.parse(cleaned.slice(firstBrace, lastBrace + 1)));
 }
 
+function logAndThrow(scope: string, error: unknown, userMessage: string): never {
+  console.error(`[${scope}]`, error);
+  throw new Error(userMessage);
+}
+
 export const extractTasks = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
@@ -36,7 +41,10 @@ export const extractTasks = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const apiKey = process.env.LOVABLE_API_KEY;
-    if (!apiKey) throw new Error("Missing LOVABLE_API_KEY");
+    if (!apiKey) {
+      console.error("[extractTasks] AI gateway not configured");
+      throw new Error("AI extraction is unavailable");
+    }
 
     const { generateText } = await import("ai");
     const { createLovableAiGatewayProvider } = await import("./ai-gateway.server");
@@ -103,12 +111,12 @@ export const saveSession = createServerFn({ method: "POST" })
       .insert({ user_id: userId, title: data.title, source_text: data.source_text })
       .select()
       .single();
-    if (error || !session) throw new Error(error?.message ?? "Failed to create session");
+    if (error || !session) logAndThrow("saveSession", error, "Failed to create session");
 
     if (data.tasks.length > 0) {
       const rows = data.tasks.map((t) => ({
         user_id: userId,
-        session_id: session.id,
+        session_id: session!.id,
         title: t.title,
         details: t.details ?? null,
         assignee: t.assignee ?? null,
@@ -116,9 +124,9 @@ export const saveSession = createServerFn({ method: "POST" })
         deadline: t.deadline ? new Date(t.deadline).toISOString() : null,
       }));
       const { error: tErr } = await supabase.from("tasks").insert(rows);
-      if (tErr) throw new Error(tErr.message);
+      if (tErr) logAndThrow("saveSession.tasks", tErr, "Failed to save tasks");
     }
-    return { sessionId: session.id };
+    return { sessionId: session!.id };
   });
 
 export const listSessions = createServerFn({ method: "GET" })
@@ -128,7 +136,7 @@ export const listSessions = createServerFn({ method: "GET" })
       .from("sessions")
       .select("id, title, created_at")
       .order("created_at", { ascending: false });
-    if (error) throw new Error(error.message);
+    if (error) logAndThrow("listSessions", error, "Failed to load sessions");
     return data ?? [];
   });
 
@@ -141,7 +149,7 @@ export const getSession = createServerFn({ method: "POST" })
       .select("*")
       .eq("id", data.id)
       .maybeSingle();
-    if (error) throw new Error(error.message);
+    if (error) logAndThrow("getSession", error, "Failed to load session");
     if (!session) return null;
     const { data: tasks } = await context.supabase
       .from("tasks")
@@ -158,7 +166,7 @@ export const listTasks = createServerFn({ method: "GET" })
       .from("tasks")
       .select("*, sessions(title)")
       .order("deadline", { ascending: true, nullsFirst: false });
-    if (error) throw new Error(error.message);
+    if (error) logAndThrow("listTasks", error, "Failed to load tasks");
     return data ?? [];
   });
 
@@ -180,7 +188,7 @@ export const updateTask = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { id, ...patch } = data;
     const { error } = await context.supabase.from("tasks").update(patch).eq("id", id);
-    if (error) throw new Error(error.message);
+    if (error) logAndThrow("updateTask", error, "Failed to update task");
     return { ok: true };
   });
 
@@ -189,7 +197,7 @@ export const deleteTask = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase.from("tasks").delete().eq("id", data.id);
-    if (error) throw new Error(error.message);
+    if (error) logAndThrow("deleteTask", error, "Failed to delete task");
     return { ok: true };
   });
 
@@ -198,7 +206,7 @@ export const deleteSession = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase.from("sessions").delete().eq("id", data.id);
-    if (error) throw new Error(error.message);
+    if (error) logAndThrow("deleteSession", error, "Failed to delete session");
     return { ok: true };
   });
 
@@ -214,7 +222,7 @@ export const upsertReminder = createServerFn({ method: "POST" })
       task_id: data.task_id,
       remind_at: new Date(data.remind_at).toISOString(),
     });
-    if (error) throw new Error(error.message);
+    if (error) logAndThrow("upsertReminder", error, "Failed to save reminder");
     return { ok: true };
   });
 
@@ -224,6 +232,6 @@ export const listReminders = createServerFn({ method: "GET" })
     const { data, error } = await context.supabase
       .from("reminders")
       .select("task_id, remind_at");
-    if (error) throw new Error(error.message);
+    if (error) logAndThrow("listReminders", error, "Failed to load reminders");
     return data ?? [];
   });
