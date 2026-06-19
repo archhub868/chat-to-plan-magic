@@ -5,9 +5,16 @@ export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       { title: "About — Planpaste" },
-      { name: "description", content: "Planpaste turns messy chats into clean action plans. Learn about our mission and team." },
+      {
+        name: "description",
+        content:
+          "Planpaste turns messy chats into clean action plans. Learn about our mission and team.",
+      },
       { property: "og:title", content: "About — Planpaste" },
-      { property: "og:description", content: "Planpaste turns messy chats into clean action plans." },
+      {
+        property: "og:description",
+        content: "Planpaste turns messy chats into clean action plans.",
+      },
     ],
   }),
   component: AboutPage,
@@ -23,7 +30,10 @@ function AboutPage() {
           </div>
           <span className="font-semibold tracking-tight">Planpaste</span>
         </Link>
-        <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+        >
           <ArrowLeft className="size-4" /> Home
         </Link>
       </header>

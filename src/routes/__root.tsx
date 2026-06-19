@@ -20,9 +20,7 @@ function NotFoundComponent() {
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-bold text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          That page doesn't exist.
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">That page doesn't exist.</p>
         <div className="mt-6">
           <Link
             to="/"
@@ -45,7 +43,9 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-xl font-semibold">Something went wrong</h1>
-        <p className="mt-2 text-sm text-muted-foreground">An unexpected error occurred. Please try again.</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          An unexpected error occurred. Please try again.
+        </p>
         <div className="mt-6 flex justify-center gap-2">
           <button
             onClick={() => {
@@ -81,11 +81,31 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: "Planpaste — Turn chats into action plans" },
-      { name: "description", content: "Action Chat transforms conversations into actionable task lists, simplifying project management." },
-      { property: "og:description", content: "Action Chat transforms conversations into actionable task lists, simplifying project management." },
-      { name: "twitter:description", content: "Action Chat transforms conversations into actionable task lists, simplifying project management." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5dee65ba-d913-430c-92d0-a606561e0489/id-preview-c503362d--00b8a7fd-3a7e-4cb0-a290-b9041a43065a.lovable.app-1781823836073.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5dee65ba-d913-430c-92d0-a606561e0489/id-preview-c503362d--00b8a7fd-3a7e-4cb0-a290-b9041a43065a.lovable.app-1781823836073.png" },
+      {
+        name: "description",
+        content:
+          "Action Chat transforms conversations into actionable task lists, simplifying project management.",
+      },
+      {
+        property: "og:description",
+        content:
+          "Action Chat transforms conversations into actionable task lists, simplifying project management.",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Action Chat transforms conversations into actionable task lists, simplifying project management.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5dee65ba-d913-430c-92d0-a606561e0489/id-preview-c503362d--00b8a7fd-3a7e-4cb0-a290-b9041a43065a.lovable.app-1781823836073.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5dee65ba-d913-430c-92d0-a606561e0489/id-preview-c503362d--00b8a7fd-3a7e-4cb0-a290-b9041a43065a.lovable.app-1781823836073.png",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

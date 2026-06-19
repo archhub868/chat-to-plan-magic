@@ -1,19 +1,30 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getSession, updateTask, deleteTask, upsertReminder, listReminders } from "@/lib/tasks.functions";
+import {
+  getSession,
+  updateTask,
+  deleteTask,
+  upsertReminder,
+  listReminders,
+} from "@/lib/tasks.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { useState } from "react";
 import { format } from "date-fns";
-import { Bell, Copy, Calendar as CalIcon, Download, Trash2, User, Quote, ChevronLeft } from "lucide-react";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Bell,
+  Copy,
+  Calendar as CalIcon,
+  Download,
+  Trash2,
+  User,
+  Quote,
+  ChevronLeft,
+} from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 export const Route = createFileRoute("/_authenticated/sessions/$sessionId")({
   component: SessionPage,
@@ -77,14 +88,18 @@ function SessionPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-10">
-      <Link to="/app" className="inline-flex items-center text-xs text-muted-foreground hover:text-foreground">
+      <Link
+        to="/app"
+        className="inline-flex items-center text-xs text-muted-foreground hover:text-foreground"
+      >
         <ChevronLeft className="size-3" /> Back
       </Link>
       <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">{data.session.title}</h1>
           <p className="mt-1 text-xs text-muted-foreground">
-            {format(new Date(data.session.created_at), "PP")} · {tasks.length} task{tasks.length === 1 ? "" : "s"}
+            {format(new Date(data.session.created_at), "PP")} · {tasks.length} task
+            {tasks.length === 1 ? "" : "s"}
           </p>
         </div>
         <div className="flex gap-2">
@@ -115,7 +130,7 @@ function SessionPage() {
       <details className="mt-10 rounded-lg border border-border bg-card/50 p-4 text-sm">
         <summary className="cursor-pointer text-muted-foreground">Original chat</summary>
         <pre className="mt-3 max-h-96 overflow-auto whitespace-pre-wrap font-mono text-xs text-muted-foreground">
-{data.session.source_text}
+          {data.session.source_text}
         </pre>
       </details>
     </div>

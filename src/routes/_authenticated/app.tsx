@@ -130,14 +130,22 @@ function PastePage() {
           <div className="rounded-xl border border-border bg-card">
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
               <div>
-                <h2 className="font-medium">{drafts.length} task{drafts.length === 1 ? "" : "s"} found</h2>
+                <h2 className="font-medium">
+                  {drafts.length} task{drafts.length === 1 ? "" : "s"} found
+                </h2>
                 <p className="text-xs text-muted-foreground">Edit anything before saving.</p>
               </div>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() =>
-                  update(drafts.length, { title: "New task", details: null, assignee: null, said_by: null, deadline: null })
+                  update(drafts.length, {
+                    title: "New task",
+                    details: null,
+                    assignee: null,
+                    said_by: null,
+                    deadline: null,
+                  })
                 }
               >
                 + Add task

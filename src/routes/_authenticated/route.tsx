@@ -1,9 +1,24 @@
-import { createFileRoute, Outlet, redirect, Link, useNavigate, useRouter } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Outlet,
+  redirect,
+  Link,
+  useNavigate,
+  useRouter,
+} from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listSessions, deleteSession } from "@/lib/tasks.functions";
-import { Plus, ListTodo, Sparkles, LogOut, MessageSquareText, Trash2, Settings } from "lucide-react";
+import {
+  Plus,
+  ListTodo,
+  Sparkles,
+  LogOut,
+  MessageSquareText,
+  Trash2,
+  Settings,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
