@@ -45,7 +45,7 @@ function AppLayout() {
     <div className="flex min-h-screen">
       <aside className="hidden w-72 shrink-0 flex-col border-r border-sidebar-border bg-sidebar md:flex">
         <div className="flex items-center justify-between px-4 py-4">
-          <Link to="/app" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <div className="grid size-8 place-items-center rounded-md bg-primary/15 text-primary">
               <Sparkles className="size-4" />
             </div>
