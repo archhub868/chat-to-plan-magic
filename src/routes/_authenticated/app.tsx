@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient } from "@tanstack/react-query";
 import { extractTasks, saveSession } from "@/lib/tasks.functions";
@@ -8,7 +8,35 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Sparkles, Trash2, Loader2, Calendar, User, Quote } from "lucide-react";
+import { Sparkles, Trash2, Loader2, Calendar, User, Quote, Upload } from "lucide-react";
+
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
+const MAX_TEXT_CHARS = 50000;
+
+async function extractTextFromFile(file: File): Promise<string> {
+  const name = file.name.toLowerCase();
+  const isPdf = file.type === "application/pdf" || name.endsWith(".pdf");
+  if (isPdf) {
+    const pdfjs = await import("pdfjs-dist");
+    // Use a worker from the same package via Vite's ?url import
+    const workerUrl = (await import("pdfjs-dist/build/pdf.worker.min.mjs?url")).default;
+    pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
+    const buf = await file.arrayBuffer();
+    const doc = await pdfjs.getDocument({ data: buf }).promise;
+    let out = "";
+    for (let i = 1; i <= doc.numPages; i++) {
+      const page = await doc.getPage(i);
+      const content = await page.getTextContent();
+      out +=
+        content.items
+          .map((it: unknown) => (it as { str?: string }).str ?? "")
+          .join(" ") + "\n\n";
+    }
+    return out.trim();
+  }
+  // Treat anything else as plain text (txt, md, csv, json, exported chat logs, etc.)
+  return await file.text();
+}
 
 type Draft = {
   title: string;
