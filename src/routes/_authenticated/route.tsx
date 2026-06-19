@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listSessions, deleteSession } from "@/lib/tasks.functions";
-import { Plus, ListTodo, Sparkles, LogOut, MessageSquareText, Trash2 } from "lucide-react";
+import { Plus, ListTodo, Sparkles, LogOut, MessageSquareText, Trash2, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -66,6 +66,13 @@ function AppLayout() {
             className="mt-2 flex items-center gap-2 rounded-md px-3 py-2 text-sm text-sidebar-foreground hover:bg-sidebar-accent"
           >
             <ListTodo className="size-4" /> All tasks
+          </Link>
+          <Link
+            to="/settings"
+            activeProps={{ className: "bg-sidebar-accent text-sidebar-accent-foreground" }}
+            className="mt-2 flex items-center gap-2 rounded-md px-3 py-2 text-sm text-sidebar-foreground hover:bg-sidebar-accent"
+          >
+            <Settings className="size-4" /> Settings
           </Link>
         </div>
 
