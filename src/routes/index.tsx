@@ -21,12 +21,17 @@ function Landing() {
           </div>
           <span className="font-semibold tracking-tight">Planpaste</span>
         </div>
-        <Link
-          to="/auth"
-          className="rounded-md border border-border px-4 py-2 text-sm font-medium hover:bg-accent"
-        >
-          Sign in
-        </Link>
+        <nav className="flex items-center gap-1 text-sm">
+          <Link to="/about" className="rounded-md px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground">About</Link>
+          <Link to="/reviews" className="rounded-md px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground">Reviews</Link>
+          <Link to="/contact" className="rounded-md px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground">Contact</Link>
+          <Link
+            to="/auth"
+            className="ml-2 rounded-md border border-border px-4 py-2 font-medium hover:bg-accent"
+          >
+            Sign in
+          </Link>
+        </nav>
       </header>
 
       <main className="mx-auto max-w-3xl px-6 pt-16 pb-24 text-center">
