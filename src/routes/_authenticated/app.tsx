@@ -60,6 +60,36 @@ function PastePage() {
   const [drafts, setDrafts] = useState<Draft[] | null>(null);
   const [extracting, setExtracting] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function onFile(file: File) {
+    if (file.size > MAX_FILE_BYTES) {
+      toast.error("File is too large (max 10 MB).");
+      return;
+    }
+    setUploading(true);
+    try {
+      const extracted = await extractTextFromFile(file);
+      if (!extracted.trim()) {
+        toast.error("Couldn't read any text from that file.");
+        return;
+      }
+      const truncated = extracted.slice(0, MAX_TEXT_CHARS);
+      setText(truncated);
+      if (extracted.length > MAX_TEXT_CHARS) {
+        toast.message(`File truncated to ${MAX_TEXT_CHARS.toLocaleString()} characters.`);
+      } else {
+        toast.success(`Loaded ${file.name}`);
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error(err instanceof Error ? err.message : "Failed to read file");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
 
   async function onExtract() {
     if (!text.trim()) return;
