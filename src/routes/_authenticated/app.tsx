@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient } from "@tanstack/react-query";
 import { extractTasks, saveSession } from "@/lib/tasks.functions";
@@ -8,7 +8,35 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Sparkles, Trash2, Loader2, Calendar, User, Quote } from "lucide-react";
+import { Sparkles, Trash2, Loader2, Calendar, User, Quote, Upload } from "lucide-react";
+
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
+const MAX_TEXT_CHARS = 50000;
+
+async function extractTextFromFile(file: File): Promise<string> {
+  const name = file.name.toLowerCase();
+  const isPdf = file.type === "application/pdf" || name.endsWith(".pdf");
+  if (isPdf) {
+    const pdfjs = await import("pdfjs-dist");
+    // Use a worker from the same package via Vite's ?url import
+    const workerUrl = (await import("pdfjs-dist/build/pdf.worker.min.mjs?url")).default;
+    pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
+    const buf = await file.arrayBuffer();
+    const doc = await pdfjs.getDocument({ data: buf }).promise;
+    let out = "";
+    for (let i = 1; i <= doc.numPages; i++) {
+      const page = await doc.getPage(i);
+      const content = await page.getTextContent();
+      out +=
+        content.items
+          .map((it: unknown) => (it as { str?: string }).str ?? "")
+          .join(" ") + "\n\n";
+    }
+    return out.trim();
+  }
+  // Treat anything else as plain text (txt, md, csv, json, exported chat logs, etc.)
+  return await file.text();
+}
 
 type Draft = {
   title: string;
@@ -32,6 +60,36 @@ function PastePage() {
   const [drafts, setDrafts] = useState<Draft[] | null>(null);
   const [extracting, setExtracting] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function onFile(file: File) {
+    if (file.size > MAX_FILE_BYTES) {
+      toast.error("File is too large (max 10 MB).");
+      return;
+    }
+    setUploading(true);
+    try {
+      const extracted = await extractTextFromFile(file);
+      if (!extracted.trim()) {
+        toast.error("Couldn't read any text from that file.");
+        return;
+      }
+      const truncated = extracted.slice(0, MAX_TEXT_CHARS);
+      setText(truncated);
+      if (extracted.length > MAX_TEXT_CHARS) {
+        toast.message(`File truncated to ${MAX_TEXT_CHARS.toLocaleString()} characters.`);
+      } else {
+        toast.success(`Loaded ${file.name}`);
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error(err instanceof Error ? err.message : "Failed to read file");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
 
   async function onExtract() {
     if (!text.trim()) return;
@@ -98,10 +156,38 @@ function PastePage() {
             placeholder={`Paste your chat here…\n\nAlice: We need the proposal by Friday.\nBob: I'll handle the budget section.\nAlice: Great — and book the venue for the 22nd.`}
             className="min-h-[320px] resize-y font-mono text-sm"
           />
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">
-              {text.length.toLocaleString()} chars
-            </span>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".txt,.md,.csv,.json,.log,.pdf,text/plain,application/pdf"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) void onFile(f);
+                }}
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading || extracting}
+              >
+                {uploading ? (
+                  <>
+                    <Loader2 className="mr-2 size-4 animate-spin" /> Reading…
+                  </>
+                ) : (
+                  <>
+                    <Upload className="mr-2 size-4" /> Upload file
+                  </>
+                )}
+              </Button>
+              <span className="text-xs text-muted-foreground">
+                {text.length.toLocaleString()} chars · .txt, .md, .csv, .json, .pdf
+              </span>
+            </div>
             <Button onClick={onExtract} disabled={!text.trim() || extracting} size="lg">
               {extracting ? (
                 <>
