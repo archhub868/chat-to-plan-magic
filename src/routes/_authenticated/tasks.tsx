@@ -58,7 +58,10 @@ function TasksPage() {
     >();
     for (const t of filtered) {
       const key = t.session_id ?? "none";
-      const title = (t as any).sessions?.title ?? "No session";
+      const title =
+        (t as unknown as { sessions?: { title?: string } | null }).sessions?.title ??
+        "No session";
+
       const existing = m.get(key);
       if (existing) existing.items.push(t);
       else m.set(key, { title, sessionId: t.session_id, items: [t] });
