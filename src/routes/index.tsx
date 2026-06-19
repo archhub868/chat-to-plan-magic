@@ -1,17 +1,22 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight, Sparkles, ListChecks, Bell, Share2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/")({
   ssr: false,
-  beforeLoad: async () => {
-    const { data } = await supabase.auth.getUser();
-    if (data.user) throw redirect({ to: "/app" });
-  },
   component: Landing,
 });
 
 function Landing() {
+  const [isAuthed, setIsAuthed] = useState(false);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setIsAuthed(!!data.user));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setIsAuthed(!!session?.user);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
   return (
     <div className="min-h-screen">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
@@ -26,10 +31,10 @@ function Landing() {
           <Link to="/reviews" className="rounded-md px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground">Reviews</Link>
           <Link to="/contact" className="rounded-md px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground">Contact</Link>
           <Link
-            to="/auth"
+            to={isAuthed ? "/app" : "/auth"}
             className="ml-2 rounded-md border border-border px-4 py-2 font-medium hover:bg-accent"
           >
-            Sign in
+            {isAuthed ? "Open app" : "Sign in"}
           </Link>
         </nav>
       </header>
@@ -51,10 +56,10 @@ function Landing() {
         </p>
         <div className="mt-8 flex justify-center gap-3">
           <Link
-            to="/auth"
+            to={isAuthed ? "/app" : "/auth"}
             className="group inline-flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Start free <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+            {isAuthed ? "Open app" : "Start free"} <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
 
