@@ -18,7 +18,10 @@ function TasksPage() {
   const fetchTasks = useServerFn(listTasks);
   const fetchReminders = useServerFn(listReminders);
   const { data: tasks } = useQuery({ queryKey: ["tasks"], queryFn: () => fetchTasks() });
-  const { data: reminders } = useQuery({ queryKey: ["reminders"], queryFn: () => fetchReminders() });
+  const { data: reminders } = useQuery({
+    queryKey: ["reminders"],
+    queryFn: () => fetchReminders(),
+  });
   const reminderByTask = new Map((reminders ?? []).map((r) => [r.task_id, r.remind_at]));
 
   const [filter, setFilter] = useState<Filter>("all");
@@ -49,10 +52,15 @@ function TasksPage() {
 
   // Group by session for "by source chat"
   const groups = useMemo(() => {
-    const m = new Map<string, { title: string; sessionId: string | null; items: typeof filtered }>();
+    const m = new Map<
+      string,
+      { title: string; sessionId: string | null; items: typeof filtered }
+    >();
     for (const t of filtered) {
       const key = t.session_id ?? "none";
-      const title = (t as any).sessions?.title ?? "No session";
+      const title =
+        (t as unknown as { sessions?: { title?: string } | null }).sessions?.title ?? "No session";
+
       const existing = m.get(key);
       if (existing) existing.items.push(t);
       else m.set(key, { title, sessionId: t.session_id, items: [t] });
@@ -64,9 +72,14 @@ function TasksPage() {
     all: tasks?.filter((t) => !t.done).length ?? 0,
     today: tasks?.filter((t) => !t.done && t.deadline && isToday(new Date(t.deadline))).length ?? 0,
     week:
-      tasks?.filter((t) => !t.done && t.deadline && isThisWeek(new Date(t.deadline), { weekStartsOn: 1 })).length ?? 0,
+      tasks?.filter(
+        (t) => !t.done && t.deadline && isThisWeek(new Date(t.deadline), { weekStartsOn: 1 }),
+      ).length ?? 0,
     overdue:
-      tasks?.filter((t) => !t.done && t.deadline && isPast(new Date(t.deadline)) && !isToday(new Date(t.deadline))).length ?? 0,
+      tasks?.filter(
+        (t) =>
+          !t.done && t.deadline && isPast(new Date(t.deadline)) && !isToday(new Date(t.deadline)),
+      ).length ?? 0,
     "no-date": tasks?.filter((t) => !t.done && !t.deadline).length ?? 0,
     done: tasks?.filter((t) => t.done).length ?? 0,
   };
@@ -117,7 +130,11 @@ function TasksPage() {
 
       {filtered.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border bg-card/30 p-10 text-center text-sm text-muted-foreground">
-          Nothing here. <Link to="/app" className="text-primary hover:underline">Paste a chat</Link> to get started.
+          Nothing here.{" "}
+          <Link to="/app" className="text-primary hover:underline">
+            Paste a chat
+          </Link>{" "}
+          to get started.
         </div>
       ) : (
         <div className="space-y-8">

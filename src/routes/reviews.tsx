@@ -14,9 +14,16 @@ export const Route = createFileRoute("/reviews")({
   head: () => ({
     meta: [
       { title: "Reviews — Planpaste" },
-      { name: "description", content: "Read reviews from Planpaste users and share your own experience turning chats into action plans." },
+      {
+        name: "description",
+        content:
+          "Read reviews from Planpaste users and share your own experience turning chats into action plans.",
+      },
       { property: "og:title", content: "Reviews — Planpaste" },
-      { property: "og:description", content: "Read reviews from Planpaste users and share your own." },
+      {
+        property: "og:description",
+        content: "Read reviews from Planpaste users and share your own.",
+      },
     ],
   }),
   component: ReviewsPage,
@@ -32,9 +39,17 @@ type Review = {
 };
 
 const reviewSchema = z.object({
-  display_name: z.string().trim().min(1, "Name is required").max(80, "Name must be under 80 characters"),
+  display_name: z
+    .string()
+    .trim()
+    .min(1, "Name is required")
+    .max(80, "Name must be under 80 characters"),
   rating: z.number().int().min(1).max(5),
-  body: z.string().trim().min(10, "Please write at least 10 characters").max(2000, "Keep your review under 2000 characters"),
+  body: z
+    .string()
+    .trim()
+    .min(10, "Please write at least 10 characters")
+    .max(2000, "Keep your review under 2000 characters"),
 });
 
 function ReviewsPage() {
@@ -114,14 +129,19 @@ function ReviewsPage() {
           </div>
           <span className="font-semibold tracking-tight">Planpaste</span>
         </Link>
-        <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+        >
           <ArrowLeft className="size-4" /> Home
         </Link>
       </header>
       <main className="mx-auto max-w-5xl px-6 pb-24">
         <h1 className="text-4xl font-semibold tracking-tight">Community reviews</h1>
         <p className="mt-3 text-muted-foreground">
-          {avg ? `Average rating: ${avg} / 5 from ${reviews!.length} review${reviews!.length === 1 ? "" : "s"}.` : "Be the first to share your experience."}
+          {avg
+            ? `Average rating: ${avg} / 5 from ${reviews!.length} review${reviews!.length === 1 ? "" : "s"}.`
+            : "Be the first to share your experience."}
         </p>
 
         <section className="mt-10 rounded-xl border border-border bg-card/50 p-6">
@@ -204,7 +224,10 @@ function ReviewsPage() {
                 <article key={r.id} className="rounded-xl border border-border bg-card/50 p-5">
                   <div className="flex items-center gap-1 text-primary">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className={`size-4 ${i < r.rating ? "fill-current" : "opacity-30"}`} />
+                      <Star
+                        key={i}
+                        className={`size-4 ${i < r.rating ? "fill-current" : "opacity-30"}`}
+                      />
                     ))}
                   </div>
                   <p className="mt-3 whitespace-pre-wrap text-sm">{r.body}</p>

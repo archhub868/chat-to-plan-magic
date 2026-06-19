@@ -36,9 +36,7 @@ function logAndThrow(scope: string, error: unknown, userMessage: string): never 
 
 export const extractTasks = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
-    z.object({ text: z.string().min(1).max(50000) }).parse(input),
-  )
+  .inputValidator((input: unknown) => z.object({ text: z.string().min(1).max(50000) }).parse(input))
   .handler(async ({ data }) => {
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) {
@@ -229,9 +227,7 @@ export const upsertReminder = createServerFn({ method: "POST" })
 export const listReminders = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data, error } = await context.supabase
-      .from("reminders")
-      .select("task_id, remind_at");
+    const { data, error } = await context.supabase.from("reminders").select("task_id, remind_at");
     if (error) logAndThrow("listReminders", error, "Failed to load reminders");
     return data ?? [];
   });

@@ -8,7 +8,11 @@ export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
       { title: "Contact Us — Planpaste" },
-      { name: "description", content: "Get in touch with the Planpaste team. We'd love to hear your feedback, questions, or feature requests." },
+      {
+        name: "description",
+        content:
+          "Get in touch with the Planpaste team. We'd love to hear your feedback, questions, or feature requests.",
+      },
       { property: "og:title", content: "Contact Us — Planpaste" },
       { property: "og:description", content: "Get in touch with the Planpaste team." },
     ],
@@ -38,7 +42,10 @@ function ContactPage() {
           </div>
           <span className="font-semibold tracking-tight">Planpaste</span>
         </Link>
-        <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+        >
           <ArrowLeft className="size-4" /> Home
         </Link>
       </header>
@@ -50,18 +57,40 @@ function ContactPage() {
           </p>
           <form onSubmit={onSubmit} className="mt-8 space-y-4">
             <div>
-              <label className="text-sm font-medium" htmlFor="name">Name</label>
-              <input id="name" required className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
+              <label className="text-sm font-medium" htmlFor="name">
+                Name
+              </label>
+              <input
+                id="name"
+                required
+                className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+              />
             </div>
             <div>
-              <label className="text-sm font-medium" htmlFor="email">Email</label>
-              <input id="email" type="email" required className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
+              <label className="text-sm font-medium" htmlFor="email">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                required
+                className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+              />
             </div>
             <div>
-              <label className="text-sm font-medium" htmlFor="message">Message</label>
-              <textarea id="message" required rows={6} className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
+              <label className="text-sm font-medium" htmlFor="message">
+                Message
+              </label>
+              <textarea
+                id="message"
+                required
+                rows={6}
+                className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+              />
             </div>
-            <Button type="submit" disabled={sending}>{sending ? "Sending…" : "Send message"}</Button>
+            <Button type="submit" disabled={sending}>
+              {sending ? "Sending…" : "Send message"}
+            </Button>
           </form>
         </section>
         <aside className="space-y-4">

@@ -53,7 +53,9 @@ function SettingsPage() {
   return (
     <div className="mx-auto max-w-2xl px-6 py-10">
       <h1 className="text-3xl font-semibold tracking-tight">Account settings</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Manage your email, password, and session.</p>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Manage your email, password, and session.
+      </p>
 
       <section className="mt-10 rounded-xl border border-border bg-card/50 p-6">
         <h2 className="font-medium">Email address</h2>
@@ -92,7 +94,9 @@ function SettingsPage() {
         <h2 className="font-medium">Session</h2>
         <p className="mt-1 text-sm text-muted-foreground">Sign out of this device.</p>
         <div className="mt-4">
-          <Button variant="outline" onClick={signOut}>Sign out</Button>
+          <Button variant="outline" onClick={signOut}>
+            Sign out
+          </Button>
         </div>
       </section>
     </div>

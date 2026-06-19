@@ -27,9 +27,24 @@ function Landing() {
           <span className="font-semibold tracking-tight">Planpaste</span>
         </div>
         <nav className="flex items-center gap-1 text-sm">
-          <Link to="/about" className="rounded-md px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground">About</Link>
-          <Link to="/reviews" className="rounded-md px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground">Reviews</Link>
-          <Link to="/contact" className="rounded-md px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground">Contact</Link>
+          <Link
+            to="/about"
+            className="rounded-md px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground"
+          >
+            About
+          </Link>
+          <Link
+            to="/reviews"
+            className="rounded-md px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground"
+          >
+            Reviews
+          </Link>
+          <Link
+            to="/contact"
+            className="rounded-md px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground"
+          >
+            Contact
+          </Link>
           <Link
             to={isAuthed ? "/app" : "/auth"}
             className="ml-2 rounded-md border border-border px-4 py-2 font-medium hover:bg-accent"
@@ -51,23 +66,36 @@ function Landing() {
           .
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-balance text-muted-foreground">
-          Paste a thread from anywhere. Get every task, deadline, and who-said-what — ready to
-          edit, remind, and share.
+          Paste a thread from anywhere. Get every task, deadline, and who-said-what — ready to edit,
+          remind, and share.
         </p>
         <div className="mt-8 flex justify-center gap-3">
           <Link
             to={isAuthed ? "/app" : "/auth"}
             className="group inline-flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            {isAuthed ? "Open app" : "Start free"} <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+            {isAuthed ? "Open app" : "Start free"}{" "}
+            <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
 
         <div className="mt-20 grid gap-4 text-left md:grid-cols-3">
           {[
-            { icon: ListChecks, t: "Extract", d: "Tasks, deadlines, commitments — auto-tagged by who said it." },
-            { icon: Bell, t: "Remind", d: "Pick a date and time. We'll nudge you when it matters." },
-            { icon: Share2, t: "Share", d: "Export as markdown, calendar (.ics), or a clean group plan." },
+            {
+              icon: ListChecks,
+              t: "Extract",
+              d: "Tasks, deadlines, commitments — auto-tagged by who said it.",
+            },
+            {
+              icon: Bell,
+              t: "Remind",
+              d: "Pick a date and time. We'll nudge you when it matters.",
+            },
+            {
+              icon: Share2,
+              t: "Share",
+              d: "Export as markdown, calendar (.ics), or a clean group plan.",
+            },
           ].map((f) => (
             <div key={f.t} className="rounded-xl border border-border bg-card/50 p-5">
               <f.icon className="size-5 text-primary" />
