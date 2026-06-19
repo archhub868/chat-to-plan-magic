@@ -156,10 +156,38 @@ function PastePage() {
             placeholder={`Paste your chat here…\n\nAlice: We need the proposal by Friday.\nBob: I'll handle the budget section.\nAlice: Great — and book the venue for the 22nd.`}
             className="min-h-[320px] resize-y font-mono text-sm"
           />
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">
-              {text.length.toLocaleString()} chars
-            </span>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".txt,.md,.csv,.json,.log,.pdf,text/plain,application/pdf"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) void onFile(f);
+                }}
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading || extracting}
+              >
+                {uploading ? (
+                  <>
+                    <Loader2 className="mr-2 size-4 animate-spin" /> Reading…
+                  </>
+                ) : (
+                  <>
+                    <Upload className="mr-2 size-4" /> Upload file
+                  </>
+                )}
+              </Button>
+              <span className="text-xs text-muted-foreground">
+                {text.length.toLocaleString()} chars · .txt, .md, .csv, .json, .pdf
+              </span>
+            </div>
             <Button onClick={onExtract} disabled={!text.trim() || extracting} size="lg">
               {extracting ? (
                 <>
