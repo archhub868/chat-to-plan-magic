@@ -47,6 +47,13 @@ type Draft = {
 };
 
 export const Route = createFileRoute("/_authenticated/app")({
+  head: () => ({
+    meta: [
+      { title: "New paste — Planpaste" },
+      { name: "description", content: "Paste a chat thread and extract its action plan." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: PastePage,
 });
 
@@ -253,6 +260,7 @@ function PastePage() {
                     />
                     <button
                       onClick={() => remove(i)}
+                      aria-label="Remove task"
                       className="grid size-9 shrink-0 place-items-center rounded-md text-muted-foreground hover:bg-destructive/15 hover:text-destructive"
                     >
                       <Trash2 className="size-4" />
