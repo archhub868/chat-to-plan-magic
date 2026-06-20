@@ -10,6 +10,22 @@ import { Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
+  head: () => ({
+    meta: [
+      { title: "Sign in — Planpaste" },
+      {
+        name: "description",
+        content: "Sign in or create your Planpaste account to turn chats into action plans.",
+      },
+      { property: "og:title", content: "Sign in — Planpaste" },
+      {
+        property: "og:description",
+        content: "Sign in or create your Planpaste account.",
+      },
+      { property: "og:url", content: "https://chat-to-plan-magic.lovable.app/auth" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();
     if (data.user) throw redirect({ to: "/app" });

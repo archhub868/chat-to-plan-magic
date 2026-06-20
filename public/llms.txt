@@ -1,0 +1,11 @@
+# Planpaste
+
+> Planpaste turns messy chats into clean action plans — paste any thread and get a shareable list of tasks, deadlines, and commitments.
+
+## Pages
+
+- [Home](/): Overview of what Planpaste does and how it works.
+- [About](/about): Mission and how Planpaste extracts actions from conversations.
+- [Reviews](/reviews): Community reviews and ratings from Planpaste users.
+- [Contact](/contact): Get in touch with the Planpaste team.
+- [Trust & Security](/trust): How Planpaste handles security, privacy, and your data.

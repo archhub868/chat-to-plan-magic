@@ -79,7 +79,8 @@ function Landing() {
           </Link>
         </div>
 
-        <div className="mt-20 grid gap-4 text-left md:grid-cols-3">
+        <h2 className="mt-20 text-2xl font-semibold tracking-tight">What Planpaste does</h2>
+        <div className="mt-6 grid gap-4 text-left md:grid-cols-3">
           {[
             {
               icon: ListChecks,

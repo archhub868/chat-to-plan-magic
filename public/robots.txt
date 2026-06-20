@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://chat-to-plan-magic.lovable.app/sitemap.xml

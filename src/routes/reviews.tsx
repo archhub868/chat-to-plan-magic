@@ -11,21 +11,69 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/reviews")({
-  head: () => ({
-    meta: [
-      { title: "Reviews — Planpaste" },
-      {
-        name: "description",
-        content:
-          "Read reviews from Planpaste users and share your own experience turning chats into action plans.",
-      },
-      { property: "og:title", content: "Reviews — Planpaste" },
-      {
-        property: "og:description",
-        content: "Read reviews from Planpaste users and share your own.",
-      },
-    ],
-  }),
+  loader: async () => {
+    const { data } = await supabase
+      .from("reviews")
+      .select("id, rating, body, display_name, created_at")
+      .order("created_at", { ascending: false });
+    const list = data ?? [];
+    const count = list.length;
+    const avg = count > 0 ? list.reduce((s, r) => s + r.rating, 0) / count : null;
+    return { count, avg, recent: list.slice(0, 5) };
+  },
+  head: ({ loaderData }) => {
+    const scripts =
+      loaderData && loaderData.count > 0 && loaderData.avg !== null
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Product",
+                name: "Planpaste",
+                description: "Turn chats into clean action plans.",
+                aggregateRating: {
+                  "@type": "AggregateRating",
+                  ratingValue: loaderData.avg.toFixed(1),
+                  reviewCount: loaderData.count,
+                  bestRating: "5",
+                  worstRating: "1",
+                },
+                review: loaderData.recent.map((r) => ({
+                  "@type": "Review",
+                  author: { "@type": "Person", name: r.display_name },
+                  datePublished: r.created_at,
+                  reviewBody: r.body,
+                  reviewRating: {
+                    "@type": "Rating",
+                    ratingValue: r.rating,
+                    bestRating: "5",
+                    worstRating: "1",
+                  },
+                })),
+              }),
+            },
+          ]
+        : undefined;
+    return {
+      meta: [
+        { title: "Reviews — Planpaste" },
+        {
+          name: "description",
+          content:
+            "Read reviews from Planpaste users and share your own experience turning chats into action plans.",
+        },
+        { property: "og:title", content: "Reviews — Planpaste" },
+        {
+          property: "og:description",
+          content: "Read reviews from Planpaste users and share your own.",
+        },
+        { property: "og:url", content: "https://chat-to-plan-magic.lovable.app/reviews" },
+      ],
+      links: [{ rel: "canonical", href: "https://chat-to-plan-magic.lovable.app/reviews" }],
+      scripts,
+    };
+  },
   component: ReviewsPage,
 });
 

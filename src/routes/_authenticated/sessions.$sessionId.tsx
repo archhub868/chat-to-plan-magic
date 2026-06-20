@@ -238,7 +238,10 @@ export function TaskRow({
         <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
           <Popover>
             <PopoverTrigger asChild>
-              <button className="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent">
+              <button
+                aria-label="Set reminder"
+                className="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"
+              >
                 <Bell className="size-3.5" />
               </button>
             </PopoverTrigger>
@@ -258,6 +261,7 @@ export function TaskRow({
           </Popover>
           <button
             onClick={remove}
+            aria-label="Delete task"
             className="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-destructive/15 hover:text-destructive"
           >
             <Trash2 className="size-3.5" />
