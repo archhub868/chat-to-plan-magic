@@ -73,6 +73,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "Paste any chat. Get a clean list of tasks, deadlines, and commitments — ready to share, schedule, or export.",
       },
+      { property: "og:site_name", content: "Planpaste" },
       { property: "og:title", content: "Planpaste — Turn chats into action plans" },
       {
         property: "og:description",
@@ -82,29 +83,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: "Planpaste — Turn chats into action plans" },
       {
-        name: "description",
-        content:
-          "Action Chat transforms conversations into actionable task lists, simplifying project management.",
-      },
-      {
-        property: "og:description",
-        content:
-          "Action Chat transforms conversations into actionable task lists, simplifying project management.",
-      },
-      {
         name: "twitter:description",
-        content:
-          "Action Chat transforms conversations into actionable task lists, simplifying project management.",
-      },
-      {
-        property: "og:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5dee65ba-d913-430c-92d0-a606561e0489/id-preview-c503362d--00b8a7fd-3a7e-4cb0-a290-b9041a43065a.lovable.app-1781823836073.png",
-      },
-      {
-        name: "twitter:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5dee65ba-d913-430c-92d0-a606561e0489/id-preview-c503362d--00b8a7fd-3a7e-4cb0-a290-b9041a43065a.lovable.app-1781823836073.png",
+        content: "Paste any chat. Get a clean list of tasks, deadlines, and commitments.",
       },
     ],
     links: [
@@ -112,6 +92,27 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap",
+      },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              name: "Planpaste",
+              url: "https://chat-to-plan-magic.lovable.app",
+              email: "hello@planpaste.app",
+            },
+            {
+              "@type": "WebSite",
+              name: "Planpaste",
+              url: "https://chat-to-plan-magic.lovable.app",
+            },
+          ],
+        }),
       },
     ],
   }),
