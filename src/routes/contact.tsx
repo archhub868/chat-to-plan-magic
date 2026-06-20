@@ -96,6 +96,9 @@ function ContactPage() {
           </form>
         </section>
         <aside className="space-y-4">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            Other ways to reach us
+          </h2>
           <div className="rounded-xl border border-border bg-card/50 p-5">
             <Mail className="size-5 text-primary" />
             <h3 className="mt-3 font-medium">Email</h3>
