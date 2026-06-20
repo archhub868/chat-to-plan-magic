@@ -4,13 +4,20 @@ import { Shield, Lock, Database, UserCheck, Mail } from "lucide-react";
 export const Route = createFileRoute("/trust")({
   head: () => ({
     meta: [
-      { title: "Trust & Security · Planpaste" },
+      { title: "Trust & Security — Planpaste" },
       {
         name: "description",
         content:
-          "How Planpaste handles security, privacy, and your data. Maintained by the Planpaste team.",
+          "How Planpaste handles security, privacy, and your data. Authentication, row-level security, and platform controls.",
       },
+      { property: "og:title", content: "Trust & Security — Planpaste" },
+      {
+        property: "og:description",
+        content: "How Planpaste handles security, privacy, and your data.",
+      },
+      { property: "og:url", content: "https://chat-to-plan-magic.lovable.app/trust" },
     ],
+    links: [{ rel: "canonical", href: "https://chat-to-plan-magic.lovable.app/trust" }],
   }),
   component: TrustPage,
 });
