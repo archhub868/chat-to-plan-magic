@@ -7,15 +7,17 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact Us — Planpaste" },
+      { title: "Contact — Planpaste" },
       {
         name: "description",
         content:
-          "Get in touch with the Planpaste team. We'd love to hear your feedback, questions, or feature requests.",
+          "Get in touch with the Planpaste team. Send feedback, report a bug, or share a feature request.",
       },
-      { property: "og:title", content: "Contact Us — Planpaste" },
+      { property: "og:title", content: "Contact — Planpaste" },
       { property: "og:description", content: "Get in touch with the Planpaste team." },
+      { property: "og:url", content: "https://chat-to-plan-magic.lovable.app/contact" },
     ],
+    links: [{ rel: "canonical", href: "https://chat-to-plan-magic.lovable.app/contact" }],
   }),
   component: ContactPage,
 });

@@ -8,14 +8,16 @@ export const Route = createFileRoute("/about")({
       {
         name: "description",
         content:
-          "Planpaste turns messy chats into clean action plans. Learn about our mission and team.",
+          "Planpaste turns messy chats into clean action plans. Learn about our mission and how we extract tasks from conversations.",
       },
       { property: "og:title", content: "About — Planpaste" },
       {
         property: "og:description",
         content: "Planpaste turns messy chats into clean action plans.",
       },
+      { property: "og:url", content: "https://chat-to-plan-magic.lovable.app/about" },
     ],
+    links: [{ rel: "canonical", href: "https://chat-to-plan-magic.lovable.app/about" }],
   }),
   component: AboutPage,
 });
