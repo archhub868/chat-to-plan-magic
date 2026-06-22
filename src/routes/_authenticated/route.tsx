@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listSessions, deleteSession } from "@/lib/tasks.functions";
+import { checkIsAdmin } from "@/lib/admin.functions";
 import {
   Plus,
   ListTodo,
@@ -18,6 +19,7 @@ import {
   MessageSquareText,
   Trash2,
   Settings,
+  Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -38,7 +40,12 @@ function AppLayout() {
   const qc = useQueryClient();
   const fetchSessions = useServerFn(listSessions);
   const delSession = useServerFn(deleteSession);
+  const fetchIsAdmin = useServerFn(checkIsAdmin);
   const { data: sessions } = useQuery({ queryKey: ["sessions"], queryFn: () => fetchSessions() });
+  const { data: adminCheck } = useQuery({
+    queryKey: ["isAdmin"],
+    queryFn: () => fetchIsAdmin(),
+  });
 
   async function signOut() {
     await qc.cancelQueries();
@@ -89,6 +96,15 @@ function AppLayout() {
           >
             <Settings className="size-4" /> Settings
           </Link>
+          {adminCheck?.isAdmin && (
+            <Link
+              to="/admin"
+              activeProps={{ className: "bg-sidebar-accent text-sidebar-accent-foreground" }}
+              className="mt-2 flex items-center gap-2 rounded-md px-3 py-2 text-sm text-sidebar-foreground hover:bg-sidebar-accent"
+            >
+              <Shield className="size-4" /> Admin
+            </Link>
+          )}
         </div>
 
         <div className="mt-6 px-4 text-xs font-medium uppercase tracking-wide text-muted-foreground">
