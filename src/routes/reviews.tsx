@@ -13,10 +13,16 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/reviews")({
   loader: async () => {
     const { data } = await supabase
-      .from("reviews")
+      .from("public_reviews")
       .select("id, rating, body, display_name, created_at")
       .order("created_at", { ascending: false });
-    const list = data ?? [];
+    const list = (data ?? []).map((r) => ({
+      id: r.id ?? "",
+      rating: r.rating ?? 0,
+      body: r.body ?? "",
+      display_name: r.display_name ?? "",
+      created_at: r.created_at ?? new Date().toISOString(),
+    }));
     const count = list.length;
     const avg = count > 0 ? list.reduce((s, r) => s + r.rating, 0) / count : null;
     return { count, avg, recent: list.slice(0, 5) };
@@ -83,7 +89,6 @@ type Review = {
   rating: number;
   body: string;
   created_at: string;
-  user_id: string;
 };
 
 const reviewSchema = z.object({
@@ -103,6 +108,7 @@ const reviewSchema = z.object({
 function ReviewsPage() {
   const [reviews, setReviews] = useState<Review[] | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [alreadyReviewed, setAlreadyReviewed] = useState(false);
   const [rating, setRating] = useState(5);
   const [hover, setHover] = useState(0);
   const [name, setName] = useState("");
@@ -111,15 +117,32 @@ function ReviewsPage() {
 
   async function loadReviews() {
     const { data, error } = await supabase
-      .from("reviews")
-      .select("id, display_name, rating, body, created_at, user_id")
+      .from("public_reviews")
+      .select("id, display_name, rating, body, created_at")
       .order("created_at", { ascending: false });
     if (error) {
       toast.error("Failed to load reviews");
       setReviews([]);
       return;
     }
-    setReviews(data ?? []);
+    setReviews(
+      (data ?? []).map((r) => ({
+        id: r.id ?? "",
+        display_name: r.display_name ?? "",
+        rating: r.rating ?? 0,
+        body: r.body ?? "",
+        created_at: r.created_at ?? new Date().toISOString(),
+      })),
+    );
+  }
+
+  async function checkAlreadyReviewed(userId: string) {
+    const { data } = await supabase
+      .from("reviews")
+      .select("id")
+      .eq("user_id", userId)
+      .maybeSingle();
+    setAlreadyReviewed(!!data);
   }
 
   useEffect(() => {
@@ -128,14 +151,15 @@ function ReviewsPage() {
       setUser(data.user);
       const meta = (data.user?.user_metadata ?? {}) as { full_name?: string; name?: string };
       setName(meta.full_name || meta.name || data.user?.email?.split("@")[0] || "");
+      if (data.user) checkAlreadyReviewed(data.user.id);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
       setUser(session?.user ?? null);
+      if (session?.user) checkAlreadyReviewed(session.user.id);
+      else setAlreadyReviewed(false);
     });
     return () => sub.subscription.unsubscribe();
   }, []);
-
-  const alreadyReviewed = !!(user && reviews?.some((r) => r.user_id === user.id));
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

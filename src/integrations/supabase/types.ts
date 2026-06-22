@@ -170,16 +170,33 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_reviews: {
+        Row: {
+          body: string | null
+          created_at: string | null
+          display_name: string | null
+          id: string | null
+          rating: number | null
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string | null
+          rating?: number | null
+        }
+        Update: {
+          body?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string | null
+          rating?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
-      }
+      [_ in never]: never
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
