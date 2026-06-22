@@ -16,7 +16,13 @@ export const Route = createFileRoute("/reviews")({
       .from("public_reviews")
       .select("id, rating, body, display_name, created_at")
       .order("created_at", { ascending: false });
-    const list = data ?? [];
+    const list = (data ?? []).map((r) => ({
+      id: r.id ?? "",
+      rating: r.rating ?? 0,
+      body: r.body ?? "",
+      display_name: r.display_name ?? "",
+      created_at: r.created_at ?? new Date().toISOString(),
+    }));
     const count = list.length;
     const avg = count > 0 ? list.reduce((s, r) => s + r.rating, 0) / count : null;
     return { count, avg, recent: list.slice(0, 5) };
