@@ -13,7 +13,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/reviews")({
   loader: async () => {
     const { data } = await supabase
-      .from("reviews")
+      .from("public_reviews")
       .select("id, rating, body, display_name, created_at")
       .order("created_at", { ascending: false });
     const list = data ?? [];
