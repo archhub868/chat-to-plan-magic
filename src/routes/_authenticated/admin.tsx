@@ -75,6 +75,9 @@ function AdminPage() {
           <TabsTrigger value="reviews">
             <Star className="mr-1.5 size-4" /> Reviews
           </TabsTrigger>
+          <TabsTrigger value="messages">
+            <Inbox className="mr-1.5 size-4" /> Messages
+          </TabsTrigger>
           <TabsTrigger value="data">
             <Database className="mr-1.5 size-4" /> Data
           </TabsTrigger>
@@ -89,9 +92,13 @@ function AdminPage() {
         <TabsContent value="reviews" className="mt-4">
           <ReviewsPanel />
         </TabsContent>
+        <TabsContent value="messages" className="mt-4">
+          <MessagesPanel />
+        </TabsContent>
         <TabsContent value="data" className="mt-4">
           <DataPanel />
         </TabsContent>
+
       </Tabs>
     </div>
   );
