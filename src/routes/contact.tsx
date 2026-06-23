@@ -2,7 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Sparkles, ArrowLeft, Mail, MessageCircle, Twitter } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -22,18 +24,41 @@ export const Route = createFileRoute("/contact")({
   component: ContactPage,
 });
 
+const contactSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(100),
+  email: z.string().trim().email("Invalid email").max(255),
+  subject: z.string().trim().min(1, "Subject is required").max(200),
+  message: z.string().trim().min(1, "Message is required").max(5000),
+});
+
 function ContactPage() {
   const [sending, setSending] = useState(false);
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const form = e.currentTarget;
+    const fd = new FormData(form);
+    const parsed = contactSchema.safeParse({
+      name: fd.get("name"),
+      email: fd.get("email"),
+      subject: fd.get("subject"),
+      message: fd.get("message"),
+    });
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0]?.message ?? "Invalid input");
+      return;
+    }
     setSending(true);
-    setTimeout(() => {
-      setSending(false);
-      (e.target as HTMLFormElement).reset();
-      toast.success("Thanks! We'll get back to you soon.");
-    }, 600);
+    const { error } = await supabase.from("contact_messages").insert(parsed.data);
+    setSending(false);
+    if (error) {
+      toast.error("Couldn't send message. Please try again.");
+      return;
+    }
+    form.reset();
+    toast.success("Thanks! We'll get back to you soon.");
   }
+
 
   return (
     <div className="min-h-screen">
@@ -64,7 +89,9 @@ function ContactPage() {
               </label>
               <input
                 id="name"
+                name="name"
                 required
+                maxLength={100}
                 className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               />
             </div>
@@ -74,8 +101,22 @@ function ContactPage() {
               </label>
               <input
                 id="email"
+                name="email"
                 type="email"
                 required
+                maxLength={255}
+                className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium" htmlFor="subject">
+                Subject
+              </label>
+              <input
+                id="subject"
+                name="subject"
+                required
+                maxLength={200}
                 className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               />
             </div>
@@ -85,8 +126,10 @@ function ContactPage() {
               </label>
               <textarea
                 id="message"
+                name="message"
                 required
                 rows={6}
+                maxLength={5000}
                 className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               />
             </div>
@@ -94,6 +137,7 @@ function ContactPage() {
               {sending ? "Sending…" : "Send message"}
             </Button>
           </form>
+
         </section>
         <aside className="space-y-4">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">

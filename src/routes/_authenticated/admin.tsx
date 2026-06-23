@@ -16,7 +16,16 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Users, MessageSquare, BarChart3, Database, Star, Trash2 } from "lucide-react";
+import {
+  Shield,
+  Users,
+  MessageSquare,
+  BarChart3,
+  Database,
+  Star,
+  Trash2,
+  Inbox,
+} from "lucide-react";
 import {
   checkIsAdmin,
   adminListUsers,
@@ -27,7 +36,11 @@ import {
   adminGetStats,
   adminListSessions,
   adminListTasks,
+  adminListMessages,
+  adminUpdateMessageStatus,
+  adminDeleteMessage,
 } from "@/lib/admin.functions";
+
 
 export const Route = createFileRoute("/_authenticated/admin")({
   ssr: false,
@@ -62,6 +75,9 @@ function AdminPage() {
           <TabsTrigger value="reviews">
             <Star className="mr-1.5 size-4" /> Reviews
           </TabsTrigger>
+          <TabsTrigger value="messages">
+            <Inbox className="mr-1.5 size-4" /> Messages
+          </TabsTrigger>
           <TabsTrigger value="data">
             <Database className="mr-1.5 size-4" /> Data
           </TabsTrigger>
@@ -76,9 +92,13 @@ function AdminPage() {
         <TabsContent value="reviews" className="mt-4">
           <ReviewsPanel />
         </TabsContent>
+        <TabsContent value="messages" className="mt-4">
+          <MessagesPanel />
+        </TabsContent>
         <TabsContent value="data" className="mt-4">
           <DataPanel />
         </TabsContent>
+
       </Tabs>
     </div>
   );
@@ -347,3 +367,111 @@ function DataPanel() {
     </div>
   );
 }
+
+function MessagesPanel() {
+  const qc = useQueryClient();
+  const fetchMessages = useServerFn(adminListMessages);
+  const updateStatus = useServerFn(adminUpdateMessageStatus);
+  const delMessage = useServerFn(adminDeleteMessage);
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin", "messages"],
+    queryFn: () => fetchMessages(),
+  });
+  const [busy, setBusy] = useState<string | null>(null);
+
+  async function setStatus(id: string, status: "new" | "read" | "resolved") {
+    setBusy(id);
+    try {
+      await updateStatus({ data: { id, status } });
+      qc.invalidateQueries({ queryKey: ["admin", "messages"] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function remove(id: string) {
+    if (!confirm("Delete this message?")) return;
+    setBusy(id);
+    try {
+      await delMessage({ data: { id } });
+      toast.success("Message deleted");
+      qc.invalidateQueries({ queryKey: ["admin", "messages"] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  if (isLoading || !data) return <p className="text-sm text-muted-foreground">Loading…</p>;
+  if (data.length === 0)
+    return <p className="text-sm text-muted-foreground">No messages yet.</p>;
+
+  return (
+    <div className="space-y-3">
+      {data.map((m) => (
+        <Card key={m.id}>
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-medium">{m.subject}</span>
+                  {m.status === "new" && <Badge>New</Badge>}
+                  {m.status === "read" && <Badge variant="secondary">Read</Badge>}
+                  {m.status === "resolved" && <Badge variant="outline">Resolved</Badge>}
+                </div>
+                <div className="mt-1 text-xs text-muted-foreground">
+                  {m.name} &lt;{m.email}&gt; · {format(new Date(m.created_at), "PPp")}
+                </div>
+                <p className="mt-3 whitespace-pre-wrap text-sm">{m.message}</p>
+              </div>
+              <div className="flex flex-col gap-2">
+                {m.status !== "read" && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={busy === m.id}
+                    onClick={() => setStatus(m.id, "read")}
+                  >
+                    Mark read
+                  </Button>
+                )}
+                {m.status !== "resolved" && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={busy === m.id}
+                    onClick={() => setStatus(m.id, "resolved")}
+                  >
+                    Resolve
+                  </Button>
+                )}
+                {m.status !== "new" && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    disabled={busy === m.id}
+                    onClick={() => setStatus(m.id, "new")}
+                  >
+                    Reopen
+                  </Button>
+                )}
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  disabled={busy === m.id}
+                  onClick={() => remove(m.id)}
+                >
+                  <Trash2 className="size-3.5" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+

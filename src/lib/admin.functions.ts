@@ -163,3 +163,50 @@ export const adminListTasks = createServerFn({ method: "GET" })
     if (error) throw new Error("Failed to load tasks");
     return data ?? [];
   });
+
+export const adminListMessages = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { data, error } = await context.supabase
+      .from("contact_messages")
+      .select("id, name, email, subject, message, status, created_at")
+      .order("created_at", { ascending: false })
+      .limit(500);
+    if (error) throw new Error("Failed to load messages");
+    return data ?? [];
+  });
+
+export const adminUpdateMessageStatus = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        status: z.enum(["new", "read", "resolved"]),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase
+      .from("contact_messages")
+      .update({ status: data.status })
+      .eq("id", data.id);
+    if (error) throw new Error("Failed to update message");
+    return { ok: true };
+  });
+
+export const adminDeleteMessage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase
+      .from("contact_messages")
+      .delete()
+      .eq("id", data.id);
+    if (error) throw new Error("Failed to delete message");
+    return { ok: true };
+  });
+
