@@ -16,7 +16,16 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Users, MessageSquare, BarChart3, Database, Star, Trash2 } from "lucide-react";
+import {
+  Shield,
+  Users,
+  MessageSquare,
+  BarChart3,
+  Database,
+  Star,
+  Trash2,
+  Inbox,
+} from "lucide-react";
 import {
   checkIsAdmin,
   adminListUsers,
@@ -27,7 +36,11 @@ import {
   adminGetStats,
   adminListSessions,
   adminListTasks,
+  adminListMessages,
+  adminUpdateMessageStatus,
+  adminDeleteMessage,
 } from "@/lib/admin.functions";
+
 
 export const Route = createFileRoute("/_authenticated/admin")({
   ssr: false,
