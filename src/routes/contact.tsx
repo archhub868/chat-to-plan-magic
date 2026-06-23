@@ -2,7 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Sparkles, ArrowLeft, Mail, MessageCircle, Twitter } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -22,18 +24,41 @@ export const Route = createFileRoute("/contact")({
   component: ContactPage,
 });
 
+const contactSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(100),
+  email: z.string().trim().email("Invalid email").max(255),
+  subject: z.string().trim().min(1, "Subject is required").max(200),
+  message: z.string().trim().min(1, "Message is required").max(5000),
+});
+
 function ContactPage() {
   const [sending, setSending] = useState(false);
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const form = e.currentTarget;
+    const fd = new FormData(form);
+    const parsed = contactSchema.safeParse({
+      name: fd.get("name"),
+      email: fd.get("email"),
+      subject: fd.get("subject"),
+      message: fd.get("message"),
+    });
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0]?.message ?? "Invalid input");
+      return;
+    }
     setSending(true);
-    setTimeout(() => {
-      setSending(false);
-      (e.target as HTMLFormElement).reset();
-      toast.success("Thanks! We'll get back to you soon.");
-    }, 600);
+    const { error } = await supabase.from("contact_messages").insert(parsed.data);
+    setSending(false);
+    if (error) {
+      toast.error("Couldn't send message. Please try again.");
+      return;
+    }
+    form.reset();
+    toast.success("Thanks! We'll get back to you soon.");
   }
+
 
   return (
     <div className="min-h-screen">
