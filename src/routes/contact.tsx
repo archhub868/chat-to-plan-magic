@@ -89,7 +89,9 @@ function ContactPage() {
               </label>
               <input
                 id="name"
+                name="name"
                 required
+                maxLength={100}
                 className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               />
             </div>
@@ -99,8 +101,22 @@ function ContactPage() {
               </label>
               <input
                 id="email"
+                name="email"
                 type="email"
                 required
+                maxLength={255}
+                className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium" htmlFor="subject">
+                Subject
+              </label>
+              <input
+                id="subject"
+                name="subject"
+                required
+                maxLength={200}
                 className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               />
             </div>
@@ -110,8 +126,10 @@ function ContactPage() {
               </label>
               <textarea
                 id="message"
+                name="message"
                 required
                 rows={6}
+                maxLength={5000}
                 className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               />
             </div>
@@ -119,6 +137,7 @@ function ContactPage() {
               {sending ? "Sending…" : "Send message"}
             </Button>
           </form>
+
         </section>
         <aside className="space-y-4">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
