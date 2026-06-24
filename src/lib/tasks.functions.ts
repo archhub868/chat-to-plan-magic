@@ -89,16 +89,18 @@ export const saveSession = createServerFn({ method: "POST" })
     z
       .object({
         title: z.string().min(1).max(200),
-        source_text: z.string().min(1),
-        tasks: z.array(
-          z.object({
-            title: z.string().min(1),
-            details: z.string().nullable().optional(),
-            assignee: z.string().nullable().optional(),
-            said_by: z.string().nullable().optional(),
-            deadline: z.string().nullable().optional(),
-          }),
-        ),
+        source_text: z.string().min(1).max(50000),
+        tasks: z
+          .array(
+            z.object({
+              title: z.string().min(1).max(500),
+              details: z.string().max(5000).nullable().optional(),
+              assignee: z.string().max(200).nullable().optional(),
+              said_by: z.string().max(200).nullable().optional(),
+              deadline: z.string().max(64).nullable().optional(),
+            }),
+          )
+          .max(500),
       })
       .parse(input),
   )
