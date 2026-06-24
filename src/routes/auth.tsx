@@ -56,7 +56,9 @@ function Auth() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
-      navigate({ to: "/app" });
+      await supabase.auth.getSession();
+      window.location.assign("/app");
+      return;
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Auth failed");
     } finally {
