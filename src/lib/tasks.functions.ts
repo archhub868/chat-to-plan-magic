@@ -176,11 +176,11 @@ export const updateTask = createServerFn({ method: "POST" })
     z
       .object({
         id: z.string().uuid(),
-        title: z.string().min(1).optional(),
-        details: z.string().nullable().optional(),
-        assignee: z.string().nullable().optional(),
-        said_by: z.string().nullable().optional(),
-        deadline: z.string().nullable().optional(),
+        title: z.string().min(1).max(500).optional(),
+        details: z.string().max(5000).nullable().optional(),
+        assignee: z.string().max(200).nullable().optional(),
+        said_by: z.string().max(200).nullable().optional(),
+        deadline: z.string().max(64).nullable().optional(),
         done: z.boolean().optional(),
       })
       .parse(input),
