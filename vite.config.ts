@@ -12,4 +12,6 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Use Netlify preset so the SSR server deploys as a Netlify Function instead of a Cloudflare Worker
+  nitro: { preset: "netlify" },
 });
