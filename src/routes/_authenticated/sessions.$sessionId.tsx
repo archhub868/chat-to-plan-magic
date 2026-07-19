@@ -25,6 +25,11 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { requestNotificationPermission } from "@/lib/use-reminder-notifications";
+
+
 
 export const Route = createFileRoute("/_authenticated/sessions/$sessionId")({
   component: SessionPage,
