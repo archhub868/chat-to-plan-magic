@@ -47,6 +47,7 @@ function AppLayout() {
     queryKey: ["isAdmin"],
     queryFn: () => fetchIsAdmin(),
   });
+  useReminderNotifications();
 
   async function signOut() {
     await qc.cancelQueries();
