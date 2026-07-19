@@ -25,6 +25,11 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { requestNotificationPermission } from "@/lib/use-reminder-notifications";
+
+
 
 export const Route = createFileRoute("/_authenticated/sessions/$sessionId")({
   component: SessionPage,
@@ -178,12 +183,24 @@ export function TaskRow({
     toast.success("Deleted");
     onChange();
   }
-  async function saveReminder() {
-    if (!remind) return;
-    await setReminder({ data: { task_id: task.id, remind_at: new Date(remind).toISOString() } });
-    toast.success("Reminder set");
+  async function saveReminder(iso?: string) {
+    const value = iso ?? remind;
+    if (!value) return;
+    const when = new Date(value);
+    if (isNaN(when.getTime())) {
+      toast.error("Pick a valid date and time");
+      return;
+    }
+    const perm = await requestNotificationPermission();
+    await setReminder({ data: { task_id: task.id, remind_at: when.toISOString() } });
+    toast.success(
+      perm === "granted"
+        ? `Reminder set for ${format(when, "PP p")}`
+        : `Reminder saved — enable browser notifications to be alerted`,
+    );
     onChange();
   }
+
 
   return (
     <li className="group rounded-lg border border-border bg-card p-4 transition-colors hover:border-primary/40">
@@ -245,19 +262,61 @@ export function TaskRow({
                 <Bell className="size-3.5" />
               </button>
             </PopoverTrigger>
-            <PopoverContent className="w-64" align="end">
-              <p className="mb-2 text-xs font-medium">Remind me at</p>
-              <Input
-                type="datetime-local"
-                value={toLocalInput(remind)}
-                onChange={(e) =>
-                  setRemind(e.target.value ? new Date(e.target.value).toISOString() : "")
-                }
-              />
-              <Button onClick={saveReminder} size="sm" className="mt-2 w-full">
-                Set reminder
+            <PopoverContent className="w-80 space-y-3" align="end">
+              <div>
+                <p className="text-xs font-medium">Quick reminder</p>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {quickPresets(task.deadline).map((p) => (
+                    <button
+                      key={p.label}
+                      onClick={() => saveReminder(p.at.toISOString())}
+                      className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                    >
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p className="mb-2 text-xs font-medium">Pick a date</p>
+                <Calendar
+                  mode="single"
+                  selected={remind ? new Date(remind) : undefined}
+                  onSelect={(d) => {
+                    if (!d) return;
+                    const base = remind ? new Date(remind) : new Date();
+                    d.setHours(base.getHours() || 9, base.getMinutes() || 0, 0, 0);
+                    setRemind(d.toISOString());
+                  }}
+                  className={cn("pointer-events-auto rounded-md border p-2")}
+                />
+                <Input
+                  type="time"
+                  className="mt-2 h-9"
+                  value={remind ? format(new Date(remind), "HH:mm") : "09:00"}
+                  onChange={(e) => {
+                    const [h, m] = e.target.value.split(":").map(Number);
+                    const d = remind ? new Date(remind) : new Date();
+                    d.setHours(h || 0, m || 0, 0, 0);
+                    setRemind(d.toISOString());
+                  }}
+                />
+              </div>
+              <Button
+                onClick={() => saveReminder()}
+                size="sm"
+                className="w-full"
+                disabled={!remind}
+              >
+                {reminder ? "Update reminder" : "Set reminder"}
               </Button>
+              {reminder && (
+                <p className="text-center text-[11px] text-muted-foreground">
+                  Currently set for {format(new Date(reminder), "PP p")}
+                </p>
+              )}
             </PopoverContent>
+
           </Popover>
           <button
             onClick={remove}
@@ -272,13 +331,34 @@ export function TaskRow({
   );
 }
 
-function toLocalInput(iso: string): string {
-  if (!iso) return "";
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return "";
-  const off = d.getTimezoneOffset();
-  return new Date(d.getTime() - off * 60_000).toISOString().slice(0, 16);
+function quickPresets(deadline: string | null): Array<{ label: string; at: Date }> {
+  const now = new Date();
+  const in1h = new Date(now.getTime() + 60 * 60_000);
+  const tomorrow9 = new Date(now);
+  tomorrow9.setDate(tomorrow9.getDate() + 1);
+  tomorrow9.setHours(9, 0, 0, 0);
+  const nextMonday = new Date(now);
+  const day = nextMonday.getDay();
+  nextMonday.setDate(nextMonday.getDate() + ((8 - day) % 7 || 7));
+  nextMonday.setHours(9, 0, 0, 0);
+  const presets = [
+    { label: "In 1 hour", at: in1h },
+    { label: "Tomorrow 9am", at: tomorrow9 },
+    { label: "Next Monday", at: nextMonday },
+  ];
+  if (deadline) {
+    const d = new Date(deadline);
+    if (!isNaN(d.getTime())) {
+      const dayBefore = new Date(d.getTime() - 24 * 60 * 60_000);
+      if (dayBefore.getTime() > now.getTime()) {
+        presets.push({ label: "1 day before deadline", at: dayBefore });
+      }
+    }
+  }
+  return presets;
 }
+
+
 
 function buildIcs(
   calendarName: string,
