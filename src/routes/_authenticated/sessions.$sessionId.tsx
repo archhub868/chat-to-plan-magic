@@ -183,12 +183,24 @@ export function TaskRow({
     toast.success("Deleted");
     onChange();
   }
-  async function saveReminder() {
-    if (!remind) return;
-    await setReminder({ data: { task_id: task.id, remind_at: new Date(remind).toISOString() } });
-    toast.success("Reminder set");
+  async function saveReminder(iso?: string) {
+    const value = iso ?? remind;
+    if (!value) return;
+    const when = new Date(value);
+    if (isNaN(when.getTime())) {
+      toast.error("Pick a valid date and time");
+      return;
+    }
+    const perm = await requestNotificationPermission();
+    await setReminder({ data: { task_id: task.id, remind_at: when.toISOString() } });
+    toast.success(
+      perm === "granted"
+        ? `Reminder set for ${format(when, "PP p")}`
+        : `Reminder saved — enable browser notifications to be alerted`,
+    );
     onChange();
   }
+
 
   return (
     <li className="group rounded-lg border border-border bg-card p-4 transition-colors hover:border-primary/40">
