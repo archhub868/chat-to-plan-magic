@@ -331,13 +331,34 @@ export function TaskRow({
   );
 }
 
-function toLocalInput(iso: string): string {
-  if (!iso) return "";
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return "";
-  const off = d.getTimezoneOffset();
-  return new Date(d.getTime() - off * 60_000).toISOString().slice(0, 16);
+function quickPresets(deadline: string | null): Array<{ label: string; at: Date }> {
+  const now = new Date();
+  const in1h = new Date(now.getTime() + 60 * 60_000);
+  const tomorrow9 = new Date(now);
+  tomorrow9.setDate(tomorrow9.getDate() + 1);
+  tomorrow9.setHours(9, 0, 0, 0);
+  const nextMonday = new Date(now);
+  const day = nextMonday.getDay();
+  nextMonday.setDate(nextMonday.getDate() + ((8 - day) % 7 || 7));
+  nextMonday.setHours(9, 0, 0, 0);
+  const presets = [
+    { label: "In 1 hour", at: in1h },
+    { label: "Tomorrow 9am", at: tomorrow9 },
+    { label: "Next Monday", at: nextMonday },
+  ];
+  if (deadline) {
+    const d = new Date(deadline);
+    if (!isNaN(d.getTime())) {
+      const dayBefore = new Date(d.getTime() - 24 * 60 * 60_000);
+      if (dayBefore.getTime() > now.getTime()) {
+        presets.push({ label: "1 day before deadline", at: dayBefore });
+      }
+    }
+  }
+  return presets;
 }
+
+
 
 function buildIcs(
   calendarName: string,
