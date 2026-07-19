@@ -262,19 +262,61 @@ export function TaskRow({
                 <Bell className="size-3.5" />
               </button>
             </PopoverTrigger>
-            <PopoverContent className="w-64" align="end">
-              <p className="mb-2 text-xs font-medium">Remind me at</p>
-              <Input
-                type="datetime-local"
-                value={toLocalInput(remind)}
-                onChange={(e) =>
-                  setRemind(e.target.value ? new Date(e.target.value).toISOString() : "")
-                }
-              />
-              <Button onClick={saveReminder} size="sm" className="mt-2 w-full">
-                Set reminder
+            <PopoverContent className="w-80 space-y-3" align="end">
+              <div>
+                <p className="text-xs font-medium">Quick reminder</p>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {quickPresets(task.deadline).map((p) => (
+                    <button
+                      key={p.label}
+                      onClick={() => saveReminder(p.at.toISOString())}
+                      className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                    >
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p className="mb-2 text-xs font-medium">Pick a date</p>
+                <Calendar
+                  mode="single"
+                  selected={remind ? new Date(remind) : undefined}
+                  onSelect={(d) => {
+                    if (!d) return;
+                    const base = remind ? new Date(remind) : new Date();
+                    d.setHours(base.getHours() || 9, base.getMinutes() || 0, 0, 0);
+                    setRemind(d.toISOString());
+                  }}
+                  className={cn("pointer-events-auto rounded-md border p-2")}
+                />
+                <Input
+                  type="time"
+                  className="mt-2 h-9"
+                  value={remind ? format(new Date(remind), "HH:mm") : "09:00"}
+                  onChange={(e) => {
+                    const [h, m] = e.target.value.split(":").map(Number);
+                    const d = remind ? new Date(remind) : new Date();
+                    d.setHours(h || 0, m || 0, 0, 0);
+                    setRemind(d.toISOString());
+                  }}
+                />
+              </div>
+              <Button
+                onClick={() => saveReminder()}
+                size="sm"
+                className="w-full"
+                disabled={!remind}
+              >
+                {reminder ? "Update reminder" : "Set reminder"}
               </Button>
+              {reminder && (
+                <p className="text-center text-[11px] text-muted-foreground">
+                  Currently set for {format(new Date(reminder), "PP p")}
+                </p>
+              )}
             </PopoverContent>
+
           </Popover>
           <button
             onClick={remove}
