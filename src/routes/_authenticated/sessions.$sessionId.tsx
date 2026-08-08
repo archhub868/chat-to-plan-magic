@@ -264,6 +264,42 @@ export function TaskRow({
                 <Bell className="size-3" /> {format(new Date(reminder), "PP p")}
               </span>
             )}
+            {status.kind !== "idle" && (
+              <span
+                role="status"
+                aria-live="polite"
+                className={cn(
+                  "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px]",
+                  status.kind === "saving" && "border-border text-muted-foreground",
+                  status.kind === "scheduled" &&
+                    (status.blocked
+                      ? "border-amber-500/40 text-amber-500"
+                      : "border-primary/40 text-primary"),
+                  status.kind === "error" && "border-destructive/40 text-destructive",
+                )}
+              >
+                {status.kind === "saving" && (
+                  <>
+                    <Loader2 className="size-3 animate-spin" /> Scheduling…
+                  </>
+                )}
+                {status.kind === "scheduled" &&
+                  (status.blocked ? (
+                    <>
+                      <AlertTriangle className="size-3" /> Saved · notifications blocked
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="size-3" /> Reminder scheduled
+                    </>
+                  ))}
+                {status.kind === "error" && (
+                  <>
+                    <XCircle className="size-3" /> {status.message}
+                  </>
+                )}
+              </span>
+            )}
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
