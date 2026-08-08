@@ -23,7 +23,6 @@ import {
   User,
   Quote,
   ChevronLeft,
-  ChevronLeft,
   Loader2,
   CheckCircle2,
   AlertTriangle,
