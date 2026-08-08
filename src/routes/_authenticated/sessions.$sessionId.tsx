@@ -23,6 +23,10 @@ import {
   User,
   Quote,
   ChevronLeft,
+  Loader2,
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
@@ -165,6 +169,9 @@ export function TaskRow({
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(task.title);
   const [remind, setRemind] = useState(reminder ?? "");
+  const [status, setStatus] = useState<
+    { kind: "idle" } | { kind: "saving" } | { kind: "scheduled"; blocked: boolean } | { kind: "error"; message: string }
+  >({ kind: "idle" });
 
   async function toggleDone(v: boolean) {
     await upd({ data: { id: task.id, done: v } });
@@ -188,17 +195,28 @@ export function TaskRow({
     if (!value) return;
     const when = new Date(value);
     if (isNaN(when.getTime())) {
+      setStatus({ kind: "error", message: "Invalid date or time" });
       toast.error("Pick a valid date and time");
       return;
     }
-    const perm = await requestNotificationPermission();
-    await setReminder({ data: { task_id: task.id, remind_at: when.toISOString() } });
-    toast.success(
-      perm === "granted"
-        ? `Reminder set for ${format(when, "PP p")}`
-        : `Reminder saved — enable browser notifications to be alerted`,
-    );
-    onChange();
+    setStatus({ kind: "saving" });
+    try {
+      const perm = await requestNotificationPermission();
+      await setReminder({ data: { task_id: task.id, remind_at: when.toISOString() } });
+      setStatus({ kind: "scheduled", blocked: perm !== "granted" });
+      toast.success(
+        perm === "granted"
+          ? `Reminder set for ${format(when, "PP p")}`
+          : `Reminder saved — enable browser notifications to be alerted`,
+      );
+      onChange();
+    } catch (e) {
+      setStatus({
+        kind: "error",
+        message: e instanceof Error ? e.message : "Could not schedule reminder",
+      });
+      toast.error("Could not schedule that reminder");
+    }
   }
 
 
@@ -248,6 +266,42 @@ export function TaskRow({
             {reminder && (
               <span className="inline-flex items-center gap-1 text-primary">
                 <Bell className="size-3" /> {format(new Date(reminder), "PP p")}
+              </span>
+            )}
+            {status.kind !== "idle" && (
+              <span
+                role="status"
+                aria-live="polite"
+                className={cn(
+                  "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px]",
+                  status.kind === "saving" && "border-border text-muted-foreground",
+                  status.kind === "scheduled" &&
+                    (status.blocked
+                      ? "border-amber-500/40 text-amber-500"
+                      : "border-primary/40 text-primary"),
+                  status.kind === "error" && "border-destructive/40 text-destructive",
+                )}
+              >
+                {status.kind === "saving" && (
+                  <>
+                    <Loader2 className="size-3 animate-spin" /> Scheduling…
+                  </>
+                )}
+                {status.kind === "scheduled" &&
+                  (status.blocked ? (
+                    <>
+                      <AlertTriangle className="size-3" /> Saved · notifications blocked
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="size-3" /> Reminder scheduled
+                    </>
+                  ))}
+                {status.kind === "error" && (
+                  <>
+                    <XCircle className="size-3" /> {status.message}
+                  </>
+                )}
               </span>
             )}
           </div>
