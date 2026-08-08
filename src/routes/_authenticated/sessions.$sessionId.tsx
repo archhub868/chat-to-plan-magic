@@ -165,6 +165,9 @@ export function TaskRow({
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(task.title);
   const [remind, setRemind] = useState(reminder ?? "");
+  const [status, setStatus] = useState<
+    { kind: "idle" } | { kind: "saving" } | { kind: "scheduled"; blocked: boolean } | { kind: "error"; message: string }
+  >({ kind: "idle" });
 
   async function toggleDone(v: boolean) {
     await upd({ data: { id: task.id, done: v } });
@@ -188,17 +191,28 @@ export function TaskRow({
     if (!value) return;
     const when = new Date(value);
     if (isNaN(when.getTime())) {
+      setStatus({ kind: "error", message: "Invalid date or time" });
       toast.error("Pick a valid date and time");
       return;
     }
-    const perm = await requestNotificationPermission();
-    await setReminder({ data: { task_id: task.id, remind_at: when.toISOString() } });
-    toast.success(
-      perm === "granted"
-        ? `Reminder set for ${format(when, "PP p")}`
-        : `Reminder saved — enable browser notifications to be alerted`,
-    );
-    onChange();
+    setStatus({ kind: "saving" });
+    try {
+      const perm = await requestNotificationPermission();
+      await setReminder({ data: { task_id: task.id, remind_at: when.toISOString() } });
+      setStatus({ kind: "scheduled", blocked: perm !== "granted" });
+      toast.success(
+        perm === "granted"
+          ? `Reminder set for ${format(when, "PP p")}`
+          : `Reminder saved — enable browser notifications to be alerted`,
+      );
+      onChange();
+    } catch (e) {
+      setStatus({
+        kind: "error",
+        message: e instanceof Error ? e.message : "Could not schedule reminder",
+      });
+      toast.error("Could not schedule that reminder");
+    }
   }
 
 
