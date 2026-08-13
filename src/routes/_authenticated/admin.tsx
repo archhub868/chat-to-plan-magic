@@ -41,7 +41,6 @@ import {
   adminDeleteMessage,
 } from "@/lib/admin.functions";
 
-
 export const Route = createFileRoute("/_authenticated/admin")({
   ssr: false,
   beforeLoad: async () => {
@@ -98,7 +97,6 @@ function AdminPage() {
         <TabsContent value="data" className="mt-4">
           <DataPanel />
         </TabsContent>
-
       </Tabs>
     </div>
   );
@@ -264,8 +262,7 @@ function ReviewsPanel() {
   }
 
   if (isLoading || !data) return <p className="text-sm text-muted-foreground">Loading…</p>;
-  if (data.length === 0)
-    return <p className="text-sm text-muted-foreground">No reviews yet.</p>;
+  if (data.length === 0) return <p className="text-sm text-muted-foreground">No reviews yet.</p>;
 
   return (
     <div className="space-y-3">
@@ -406,8 +403,7 @@ function MessagesPanel() {
   }
 
   if (isLoading || !data) return <p className="text-sm text-muted-foreground">Loading…</p>;
-  if (data.length === 0)
-    return <p className="text-sm text-muted-foreground">No messages yet.</p>;
+  if (data.length === 0) return <p className="text-sm text-muted-foreground">No messages yet.</p>;
 
   return (
     <div className="space-y-3">
@@ -474,4 +470,3 @@ function MessagesPanel() {
     </div>
   );
 }
-

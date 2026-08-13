@@ -33,8 +33,6 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { requestNotificationPermission } from "@/lib/use-reminder-notifications";
 
-
-
 export const Route = createFileRoute("/_authenticated/sessions/$sessionId")({
   component: SessionPage,
 });
@@ -170,7 +168,10 @@ export function TaskRow({
   const [title, setTitle] = useState(task.title);
   const [remind, setRemind] = useState(reminder ?? "");
   const [status, setStatus] = useState<
-    { kind: "idle" } | { kind: "saving" } | { kind: "scheduled"; blocked: boolean } | { kind: "error"; message: string }
+    | { kind: "idle" }
+    | { kind: "saving" }
+    | { kind: "scheduled"; blocked: boolean }
+    | { kind: "error"; message: string }
   >({ kind: "idle" });
 
   async function toggleDone(v: boolean) {
@@ -218,7 +219,6 @@ export function TaskRow({
       toast.error("Could not schedule that reminder");
     }
   }
-
 
   return (
     <li className="group rounded-lg border border-border bg-card p-4 transition-colors hover:border-primary/40">
@@ -370,7 +370,6 @@ export function TaskRow({
                 </p>
               )}
             </PopoverContent>
-
           </Popover>
           <button
             onClick={remove}
@@ -411,8 +410,6 @@ function quickPresets(deadline: string | null): Array<{ label: string; at: Date 
   }
   return presets;
 }
-
-
 
 function buildIcs(
   calendarName: string,
