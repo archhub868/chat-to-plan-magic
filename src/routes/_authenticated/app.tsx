@@ -28,9 +28,7 @@ async function extractTextFromFile(file: File): Promise<string> {
       const page = await doc.getPage(i);
       const content = await page.getTextContent();
       out +=
-        content.items
-          .map((it: unknown) => (it as { str?: string }).str ?? "")
-          .join(" ") + "\n\n";
+        content.items.map((it: unknown) => (it as { str?: string }).str ?? "").join(" ") + "\n\n";
     }
     return out.trim();
   }

@@ -59,7 +59,6 @@ function ContactPage() {
     toast.success("Thanks! We'll get back to you soon.");
   }
 
-
   return (
     <div className="min-h-screen">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
@@ -137,7 +136,6 @@ function ContactPage() {
               {sending ? "Sending…" : "Send message"}
             </Button>
           </form>
-
         </section>
         <aside className="space-y-4">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">

@@ -202,11 +202,7 @@ export const adminDeleteMessage = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
-    const { error } = await context.supabase
-      .from("contact_messages")
-      .delete()
-      .eq("id", data.id);
+    const { error } = await context.supabase.from("contact_messages").delete().eq("id", data.id);
     if (error) throw new Error("Failed to delete message");
     return { ok: true };
   });
-
