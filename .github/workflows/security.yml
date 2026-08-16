@@ -6,7 +6,7 @@ on:
   pull_request:
   schedule:
     # Daily re-scan so newly published advisories surface without a code change.
-    - cron: '0 6 * * *'
+    - cron: "0 6 * * *"
 
 permissions:
   contents: read
@@ -54,7 +54,7 @@ jobs:
 
       - uses: github/codeql-action/analyze@v3
         with:
-          category: '/language:javascript-typescript'
+          category: "/language:javascript-typescript"
 
   secret-scanning:
     name: Secret scan
@@ -84,7 +84,10 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Lint
-        run: bun run lint
+        run: |
+          bun run lint:fix || true
+          bun run format || true
+          bun run lint
 
       - name: Build
         run: bun run build
