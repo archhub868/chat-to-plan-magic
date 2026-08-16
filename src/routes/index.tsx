@@ -40,11 +40,18 @@ function Landing() {
             Reviews
           </Link>
           <Link
+            to="/guides/whatsapp-tasks"
+            className="rounded-md px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground"
+          >
+            WhatsApp guide
+          </Link>
+          <Link
             to="/contact"
             className="rounded-md px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground"
           >
             Contact
           </Link>
+
           <Link
             to={isAuthed ? "/app" : "/auth"}
             className="ml-2 rounded-md border border-border px-4 py-2 font-medium hover:bg-accent"

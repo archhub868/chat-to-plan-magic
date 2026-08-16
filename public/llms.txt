@@ -9,3 +9,5 @@
 - [Reviews](/reviews): Community reviews and ratings from Planpaste users.
 - [Contact](/contact): Get in touch with the Planpaste team.
 - [Trust & Security](/trust): How Planpaste handles security, privacy, and your data.
+- [WhatsApp task extractor guide](/guides/whatsapp-tasks): Step-by-step guide to turning WhatsApp group chats into action plans.
+
