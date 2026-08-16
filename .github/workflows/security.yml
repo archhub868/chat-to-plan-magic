@@ -6,7 +6,7 @@ on:
   pull_request:
   schedule:
     # Daily re-scan so newly published advisories surface without a code change.
-    - cron: '0 6 * * *'
+    - cron: "0 6 * * *"
 
 permissions:
   contents: read
@@ -54,7 +54,7 @@ jobs:
 
       - uses: github/codeql-action/analyze@v3
         with:
-          category: '/language:javascript-typescript'
+          category: "/language:javascript-typescript"
 
   secret-scanning:
     name: Secret scan
