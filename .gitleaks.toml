@@ -1,0 +1,12 @@
+title = "Planpaste gitleaks config"
+
+[extend]
+useDefault = true
+
+# The publishable (anon) backend key in .env is public by design:
+# it ships to every browser and is protected by row-level security.
+[[allowlists]]
+description = "Public publishable backend key in .env"
+paths = ['''^\.env$''']
+regexTarget = "line"
+regexes = ['''SUPABASE_PUBLISHABLE_KEY=''']
