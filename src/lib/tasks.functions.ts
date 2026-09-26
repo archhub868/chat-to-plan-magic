@@ -38,21 +38,21 @@ export const extractTasks = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => z.object({ text: z.string().min(1).max(50000) }).parse(input))
   .handler(async ({ data }) => {
-    const apiKey = process.env.LOVABLE_API_KEY;
+    const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      console.error("[extractTasks] AI gateway not configured");
-      throw new Error("AI extraction is unavailable");
+      console.error("[extractTasks] OPENAI_API_KEY not configured");
+      throw new Error("AI extraction is unavailable. Add OPENAI_API_KEY to Vercel.");
     }
 
     const { generateText } = await import("ai");
-    const { createLovableAiGatewayProvider } = await import("./ai-gateway.server");
-    const gateway = createLovableAiGatewayProvider(apiKey);
+    const { createOpenAI } = await import("@ai-sdk/openai");
+    const openai = createOpenAI({ apiKey });
 
     const now = new Date().toISOString();
     const { text } = await generateText({
-      model: gateway("google/gemini-3-flash-preview"),
+      model: openai("gpt-4o-mini"),
       temperature: 0,
-      maxOutputTokens: 4096,
+      maxTokens: 4096,
       prompt: `You extract actionable tasks, deadlines, and commitments from chat transcripts.
 
 Return only valid JSON, with no markdown fences or commentary. Shape:
