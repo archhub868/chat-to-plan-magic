@@ -12,4 +12,9 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Use the Netlify preset so the server handler is deployed as a Netlify Function.
+  // The Lovable sandbox overrides this to cloudflare-module, so sandbox previews are unaffected.
+  nitro: {
+    preset: "netlify",
+  },
 });
