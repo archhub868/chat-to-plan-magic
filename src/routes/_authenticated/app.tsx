@@ -145,7 +145,7 @@ function PastePage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-10">
+    <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-semibold tracking-tight">New paste</h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -161,8 +161,8 @@ function PastePage() {
             placeholder={`Paste your chat here…\n\nAlice: We need the proposal by Friday.\nBob: I'll handle the budget section.\nAlice: Great — and book the venue for the 22nd.`}
             className="min-h-[320px] resize-y font-mono text-sm"
           />
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+            <div className="flex min-w-0 flex-wrap items-center gap-2 sm:gap-3">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -189,11 +189,11 @@ function PastePage() {
                   </>
                 )}
               </Button>
-              <span className="text-xs text-muted-foreground">
+              <span className="min-w-0 text-xs text-muted-foreground">
                 {text.length.toLocaleString()} chars · .txt, .md, .csv, .json, .pdf
               </span>
             </div>
-            <Button onClick={onExtract} disabled={!text.trim() || extracting} size="lg">
+            <Button onClick={onExtract} disabled={!text.trim() || extracting} size="lg" className="w-full sm:w-auto">
               {extracting ? (
                 <>
                   <Loader2 className="mr-2 size-4 animate-spin" /> Extracting…
@@ -219,8 +219,8 @@ function PastePage() {
           </div>
 
           <div className="rounded-xl border border-border bg-card">
-            <div className="flex items-center justify-between border-b border-border px-4 py-3">
-              <div>
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-b border-border px-3 py-3 sm:px-4">
+              <div className="min-w-0">
                 <h2 className="font-medium">
                   {drafts.length} task{drafts.length === 1 ? "" : "s"} found
                 </h2>
@@ -249,20 +249,22 @@ function PastePage() {
                 </li>
               )}
               {drafts.map((t, i) => (
-                <li key={i} className="space-y-2 px-4 py-4">
-                  <div className="flex gap-2">
+                <li key={i} className="space-y-2 px-3 py-4 sm:px-4">
+                  <div className="flex min-w-0 gap-2">
                     <Input
                       value={t.title}
                       onChange={(e) => update(i, { title: e.target.value })}
                       className="font-medium"
                     />
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       onClick={() => remove(i)}
                       aria-label="Remove task"
-                      className="grid size-9 shrink-0 place-items-center rounded-md text-muted-foreground hover:bg-destructive/15 hover:text-destructive"
+                      className="size-9 shrink-0 text-muted-foreground hover:text-destructive"
                     >
                       <Trash2 className="size-4" />
-                    </button>
+                    </Button>
                   </div>
                   {t.details !== null && (
                     <Textarea
@@ -279,7 +281,7 @@ function PastePage() {
                         value={t.assignee ?? ""}
                         onChange={(e) => update(i, { assignee: e.target.value || null })}
                         placeholder="Assignee"
-                        className="pl-8 text-sm"
+                        className="min-w-0 pl-8 text-sm"
                       />
                     </div>
                     <div className="relative">
@@ -288,7 +290,7 @@ function PastePage() {
                         value={t.said_by ?? ""}
                         onChange={(e) => update(i, { said_by: e.target.value || null })}
                         placeholder="Said by"
-                        className="pl-8 text-sm"
+                        className="min-w-0 pl-8 text-sm"
                       />
                     </div>
                     <div className="relative">
@@ -303,7 +305,7 @@ function PastePage() {
                               : null,
                           })
                         }
-                        className="pl-8 text-sm"
+                        className="min-w-0 pl-8 text-sm"
                       />
                     </div>
                   </div>
@@ -312,7 +314,7 @@ function PastePage() {
             </ul>
           </div>
 
-          <div className="flex items-center justify-between">
+           <div className="flex flex-wrap items-center justify-between gap-3">
             <Button variant="ghost" onClick={() => setDrafts(null)}>
               ← Back to paste
             </Button>

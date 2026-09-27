@@ -3,13 +3,23 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { listTasks, listReminders } from "@/lib/tasks.functions";
 import { useMemo, useState } from "react";
-import { format, isPast, isToday, isThisWeek } from "date-fns";
+import { isPast, isToday, isThisWeek } from "date-fns";
 import { TaskRow } from "./sessions.$sessionId";
 import { ListTodo } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type Filter = "all" | "today" | "week" | "overdue" | "no-date" | "done";
 
 export const Route = createFileRoute("/_authenticated/tasks")({
+  head: () => ({ meta: [
+    { title: "All tasks — Planpaste" },
+    { name: "description", content: "Review and filter your Planpaste tasks." },
+    { property: "og:title", content: "All tasks — Planpaste" },
+    { property: "og:description", content: "Review and filter your Planpaste tasks." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: TasksPage,
 });
 
@@ -85,45 +95,51 @@ function TasksPage() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-10">
+    <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-10">
       <div className="mb-6 flex items-center gap-2">
         <ListTodo className="size-5 text-primary" />
         <h1 className="text-3xl font-semibold tracking-tight">All tasks</h1>
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-2">
+       <div className="-mx-4 mb-4 flex gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:flex-wrap sm:px-0">
         {(["all", "today", "week", "overdue", "no-date", "done"] as Filter[]).map((f) => (
-          <button
+           <Button
             key={f}
+             variant="outline"
+             size="sm"
             onClick={() => setFilter(f)}
-            className={`rounded-full border px-3 py-1 text-xs transition-colors ${
+             className={`shrink-0 rounded-full text-xs ${
               filter === f
                 ? "border-primary bg-primary/15 text-primary"
                 : "border-border text-muted-foreground hover:bg-accent"
             }`}
           >
             {labelFor(f)} <span className="ml-1 opacity-60">{counts[f]}</span>
-          </button>
+           </Button>
         ))}
       </div>
 
       {people.length > 0 && (
         <div className="mb-6 flex flex-wrap items-center gap-2 text-xs">
           <span className="text-muted-foreground">Person:</span>
-          <button
+           <Button
+             variant="ghost"
+             size="sm"
             onClick={() => setPerson("all")}
             className={`rounded-full px-3 py-1 ${person === "all" ? "bg-accent text-foreground" : "text-muted-foreground hover:text-foreground"}`}
           >
             Everyone
-          </button>
+           </Button>
           {people.map((p) => (
-            <button
+             <Button
+               variant="ghost"
+               size="sm"
               key={p}
               onClick={() => setPerson(p)}
               className={`rounded-full px-3 py-1 ${person === p ? "bg-accent text-foreground" : "text-muted-foreground hover:text-foreground"}`}
             >
               {p}
-            </button>
+             </Button>
           ))}
         </div>
       )}
@@ -140,8 +156,8 @@ function TasksPage() {
         <div className="space-y-8">
           {groups.map((g) => (
             <div key={g.sessionId ?? "none"}>
-              <div className="mb-2 flex items-baseline justify-between">
-                <h2 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+               <div className="mb-2 grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-2">
+                 <h2 className="min-w-0 truncate text-xs font-medium uppercase tracking-wide text-muted-foreground">
                   {g.title}
                 </h2>
                 {g.sessionId && (

@@ -10,6 +10,10 @@ export const Route = createFileRoute("/_authenticated/settings")({
     meta: [
       { title: "Account settings — Planpaste" },
       { name: "description", content: "Manage your Planpaste email, password, and session." },
+      { property: "og:title", content: "Account settings — Planpaste" },
+      { property: "og:description", content: "Manage your Planpaste email, password, and session." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -58,13 +62,13 @@ function SettingsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-10">
+    <div className="mx-auto max-w-2xl px-4 py-6 sm:px-6 sm:py-10">
       <h1 className="text-3xl font-semibold tracking-tight">Account settings</h1>
       <p className="mt-2 text-sm text-muted-foreground">
         Manage your email, password, and session.
       </p>
 
-      <section className="mt-10 rounded-xl border border-border bg-card/50 p-6">
+       <section className="mt-10 border-t border-border pt-6">
         <h2 className="font-medium">Email address</h2>
         <p className="mt-1 text-sm text-muted-foreground">Signed in as {currentEmail || "…"}.</p>
         <input
@@ -80,7 +84,7 @@ function SettingsPage() {
         </div>
       </section>
 
-      <section className="mt-6 rounded-xl border border-border bg-card/50 p-6">
+       <section className="mt-6 border-t border-border pt-6">
         <h2 className="font-medium">Change password</h2>
         <p className="mt-1 text-sm text-muted-foreground">Use at least 8 characters.</p>
         <input
@@ -97,7 +101,7 @@ function SettingsPage() {
         </div>
       </section>
 
-      <section className="mt-6 rounded-xl border border-border bg-card/50 p-6">
+       <section className="mt-6 border-t border-border pt-6">
         <h2 className="font-medium">Session</h2>
         <p className="mt-1 text-sm text-muted-foreground">Sign out of this device.</p>
         <div className="mt-4">
