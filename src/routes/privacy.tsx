@@ -39,7 +39,7 @@ function PrivacyPage() {
 
         <section className="mt-8 space-y-6 text-sm leading-relaxed text-muted-foreground">
           <p>
-            Welcome to <strong className="text-foreground">Planpaste</strong> ("we," "our," or "us"). We respect your privacy and are committed to protecting the personal data you share with us when using our web application located at <strong className="text-foreground">https://magicplan.world</strong>.
+            Welcome to <strong className="text-foreground">Planpaste</strong>. We respect your privacy and are committed to protecting the personal data you share with us when using our web application located at <strong className="text-foreground">https://magicplan.world</strong>.
           </p>
 
           <h2 className="text-lg font-semibold text-foreground">1. Information We Collect</h2>
@@ -77,7 +77,7 @@ function PrivacyPage() {
           <p>
             If you have any questions or concerns regarding this Privacy Policy, please contact us at:{" "}
             <a href="mailto:hello@magicplan.world" className="text-primary underline">
-              hello@planpaste.app
+              hello@magicplan.world
             </a>.
           </p>
         </section>
