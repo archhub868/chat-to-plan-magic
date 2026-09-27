@@ -91,10 +91,12 @@ ${colorConfig
 };
 
 const ChartTooltip = RechartsPrimitive.Tooltip;
+type TooltipPayload = NonNullable<React.ComponentProps<typeof RechartsPrimitive.TooltipContent>["payload"]>;
+type LegendPayload = NonNullable<React.ComponentProps<typeof RechartsPrimitive.DefaultLegendContent>["payload"]>;
 
 const ChartTooltipContent = React.forwardRef<
   HTMLDivElement,
-  React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
+   React.ComponentProps<typeof RechartsPrimitive.TooltipContent> &
     React.ComponentProps<"div"> & {
       hideLabel?: boolean;
       hideIndicator?: boolean;
@@ -243,7 +245,7 @@ const ChartLegend = RechartsPrimitive.Legend;
 const ChartLegendContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> &
-    Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
+     { payload?: LegendPayload; verticalAlign?: "top" | "bottom" | "middle" } & {
       hideIcon?: boolean;
       nameKey?: string;
     }

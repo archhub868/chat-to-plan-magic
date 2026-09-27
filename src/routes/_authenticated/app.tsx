@@ -49,6 +49,10 @@ export const Route = createFileRoute("/_authenticated/app")({
     meta: [
       { title: "New paste — Planpaste" },
       { name: "description", content: "Paste a chat thread and extract its action plan." },
+      { property: "og:title", content: "New paste — Planpaste" },
+      { property: "og:description", content: "Paste a chat thread and extract its action plan." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],
   }),

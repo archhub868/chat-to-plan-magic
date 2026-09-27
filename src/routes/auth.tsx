@@ -23,6 +23,8 @@ export const Route = createFileRoute("/auth")({
         content: "Sign in or create your Planpaste account.",
       },
       { property: "og:url", content: "https://chat-to-plan-magic.lovable.app/auth" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],
   }),
