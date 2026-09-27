@@ -144,7 +144,7 @@ function ContactPage() {
           <div className="rounded-xl border border-border bg-card/50 p-5">
             <Mail className="size-5 text-primary" />
             <h3 className="mt-3 font-medium">Email</h3>
-            <p className="mt-1 text-sm text-muted-foreground">hello@planpaste.app</p>
+            <p className="mt-1 text-sm text-muted-foreground">hello@magicplan.world</p>
           </div>
           <div className="rounded-xl border border-border bg-card/50 p-5">
             <MessageCircle className="size-5 text-primary" />
