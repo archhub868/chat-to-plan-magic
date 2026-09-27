@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { sendContactEmail } from "@/lib/email.functions";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -38,12 +39,14 @@ function ContactPage() {
     e.preventDefault();
     const form = e.currentTarget;
     const fd = new FormData(form);
-    const parsed = contactSchema.safeParse({
-      name: fd.get("name"),
-      email: fd.get("email"),
-      subject: fd.get("subject"),
-      message: fd.get("message"),
-    });
+    const formData = {
+      name: String(fd.get("name") ?? ""),
+      email: String(fd.get("email") ?? ""),
+      subject: String(fd.get("subject") ?? ""),
+      message: String(fd.get("message") ?? ""),
+    };
+
+    const parsed = contactSchema.safeParse(formData);
 
     if (!parsed.success) {
       toast.error(parsed.error.issues[0]?.message ?? "Invalid input");
@@ -52,18 +55,21 @@ function ContactPage() {
 
     setSending(true);
 
-    // Save to Supabase contact_messages table
-    const { error } = await supabase.from("contact_messages").insert(parsed.data);
+    try {
+      // 1. Save record in Supabase database
+      await supabase.from("contact_messages").insert(parsed.data);
 
-    setSending(false);
+      // 2. Trigger email to planpaste@gmail.com via Resend
+      await sendContactEmail({ data: parsed.data });
 
-    if (error) {
-      toast.error("Couldn't send message. Please try again.");
-      return;
+      form.reset();
+      toast.success("Thanks! Message delivered to planpaste@gmail.com");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Couldn't send message. Please try again.";
+      toast.error(msg);
+    } finally {
+      setSending(false);
     }
-
-    form.reset();
-    toast.success("Thanks! We'll get back to you soon.");
   }
 
   return (
@@ -160,7 +166,7 @@ function ContactPage() {
             <h3 className="mt-3 font-medium">Email</h3>
             <a
               href="mailto:planpaste@gmail.com"
-              className="mt-1 text-sm text-muted-foreground hover:text-primary underline block"
+              className="mt-1 block text-sm text-muted-foreground underline hover:text-primary"
             >
               planpaste@gmail.com
             </a>
