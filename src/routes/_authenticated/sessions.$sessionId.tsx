@@ -34,6 +34,15 @@ import { cn } from "@/lib/utils";
 import { requestNotificationPermission } from "@/lib/use-reminder-notifications";
 
 export const Route = createFileRoute("/_authenticated/sessions/$sessionId")({
+  head: () => ({ meta: [
+    { title: "Chat plan — Planpaste" },
+    { name: "description", content: "Review tasks and reminders from a saved chat plan." },
+    { property: "og:title", content: "Chat plan — Planpaste" },
+    { property: "og:description", content: "Review tasks and reminders from a saved chat plan." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: SessionPage,
 });
 
@@ -94,22 +103,22 @@ function SessionPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-10">
+    <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-10">
       <Link
         to="/app"
         className="inline-flex items-center text-xs text-muted-foreground hover:text-foreground"
       >
         <ChevronLeft className="size-3" /> Back
       </Link>
-      <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-3xl font-semibold tracking-tight">{data.session.title}</h1>
+       <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
+         <div className="min-w-0 max-w-full">
+           <h1 className="break-words text-3xl font-semibold">{data.session.title}</h1>
           <p className="mt-1 text-xs text-muted-foreground">
             {format(new Date(data.session.created_at), "PP")} · {tasks.length} task
             {tasks.length === 1 ? "" : "s"}
           </p>
         </div>
-        <div className="flex gap-2">
+         <div className="flex flex-wrap gap-2">
           <Button onClick={exportMarkdown} variant="outline" size="sm">
             <Copy className="mr-2 size-4" /> Markdown
           </Button>
@@ -221,8 +230,8 @@ export function TaskRow({
   }
 
   return (
-    <li className="group rounded-lg border border-border bg-card p-4 transition-colors hover:border-primary/40">
-      <div className="flex items-start gap-3">
+     <li className="group rounded-lg border border-border bg-card p-3 transition-colors hover:border-primary/40 sm:p-4">
+       <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 sm:gap-3">
         <Checkbox
           checked={task.done}
           onCheckedChange={(v) => toggleDone(Boolean(v))}
@@ -239,14 +248,15 @@ export function TaskRow({
               className="h-7"
             />
           ) : (
-            <button
+             <Button
+               variant="ghost"
               onClick={() => setEditing(true)}
-              className={`block text-left text-sm font-medium ${task.done ? "text-muted-foreground line-through" : ""}`}
+               className={`h-auto min-w-0 w-full justify-start whitespace-normal break-words p-0 text-left text-sm font-medium hover:bg-transparent ${task.done ? "text-muted-foreground line-through" : ""}`}
             >
               {task.title}
-            </button>
+             </Button>
           )}
-          {task.details && <p className="mt-1 text-xs text-muted-foreground">{task.details}</p>}
+           {task.details && <p className="mt-1 break-words text-xs text-muted-foreground">{task.details}</p>}
           <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
             {task.assignee && (
               <span className="inline-flex items-center gap-1">
@@ -306,28 +316,32 @@ export function TaskRow({
             )}
           </div>
         </div>
-        <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+         <div className="flex shrink-0 flex-col items-center gap-1 transition-opacity sm:flex-row md:opacity-100 lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100">
           <Popover>
             <PopoverTrigger asChild>
-              <button
+               <Button
+                 variant="ghost"
+                 size="icon"
                 aria-label="Set reminder"
-                className="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"
+                 className="size-8 text-muted-foreground"
               >
                 <Bell className="size-3.5" />
-              </button>
+               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-80 space-y-3" align="end">
+             <PopoverContent className="w-[min(20rem,calc(100vw-1.5rem))] max-h-[min(36rem,calc(100dvh-5rem))] space-y-3 overflow-y-auto" align="end">
               <div>
                 <p className="text-xs font-medium">Quick reminder</p>
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {quickPresets(task.deadline).map((p) => (
-                    <button
+                     <Button
+                       variant="outline"
+                       size="sm"
                       key={p.label}
                       onClick={() => saveReminder(p.at.toISOString())}
-                      className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                       className="h-auto rounded-full px-2.5 py-1 text-xs text-muted-foreground"
                     >
                       {p.label}
-                    </button>
+                     </Button>
                   ))}
                 </div>
               </div>
@@ -371,13 +385,15 @@ export function TaskRow({
               )}
             </PopoverContent>
           </Popover>
-          <button
+           <Button
+             variant="ghost"
+             size="icon"
             onClick={remove}
             aria-label="Delete task"
-            className="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-destructive/15 hover:text-destructive"
+             className="size-8 text-muted-foreground hover:text-destructive"
           >
             <Trash2 className="size-3.5" />
-          </button>
+           </Button>
         </div>
       </div>
     </li>

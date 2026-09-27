@@ -23,6 +23,8 @@ export const Route = createFileRoute("/auth")({
         content: "Sign in or create your Planpaste account.",
       },
       { property: "og:url", content: "https://chat-to-plan-magic.lovable.app/auth" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -70,19 +72,17 @@ function Auth() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/app`,
+        redirectTo: window.location.origin,
       },
     });
-    if (result.error) {
+    if (error) {
       toast.error("Google sign-in failed");
-      return;
     }
-    if (!result.redirected) navigate({ to: "/app" });
   }
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-sm rounded-2xl border border-border bg-card/80 p-8 backdrop-blur">
+      <div className="w-full max-w-sm rounded-lg border border-border bg-card/80 p-5 backdrop-blur sm:p-8">
         <div className="mb-6 flex items-center gap-2">
           <div className="grid size-8 place-items-center rounded-md bg-primary/15 text-primary">
             <Sparkles className="size-4" />

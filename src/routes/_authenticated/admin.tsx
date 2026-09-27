@@ -42,6 +42,15 @@ import {
 } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
+  head: () => ({ meta: [
+    { title: "Admin — Planpaste" },
+    { name: "description", content: "Manage Planpaste users, reviews, and data." },
+    { property: "og:title", content: "Admin — Planpaste" },
+    { property: "og:description", content: "Manage Planpaste users, reviews, and data." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   ssr: false,
   beforeLoad: async () => {
     const result = await checkIsAdmin();
@@ -52,7 +61,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
 function AdminPage() {
   return (
-    <div className="mx-auto max-w-7xl p-6">
+    <div className="mx-auto min-w-0 max-w-7xl p-4 sm:p-6">
       <div className="mb-6 flex items-center gap-3">
         <div className="grid size-10 place-items-center rounded-md bg-primary/15 text-primary">
           <Shield className="size-5" />
@@ -64,7 +73,7 @@ function AdminPage() {
       </div>
 
       <Tabs defaultValue="stats">
-        <TabsList>
+         <TabsList className="flex h-auto w-full justify-start overflow-x-auto sm:w-fit">
           <TabsTrigger value="stats">
             <BarChart3 className="mr-1.5 size-4" /> Stats
           </TabsTrigger>
@@ -174,7 +183,7 @@ function UsersPanel() {
 
   return (
     <Card>
-      <CardContent className="p-0">
+       <CardContent className="overflow-x-auto p-0">
         <Table>
           <TableHeader>
             <TableRow>

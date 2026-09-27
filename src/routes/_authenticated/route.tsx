@@ -21,9 +21,12 @@ import {
   Trash2,
   Settings,
   Shield,
+  Menu,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useState } from "react";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -36,6 +39,7 @@ export const Route = createFileRoute("/_authenticated")({
 });
 
 function AppLayout() {
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const router = useRouter();
   const qc = useQueryClient();
@@ -66,8 +70,18 @@ function AppLayout() {
   }
 
   return (
-    <div className="flex min-h-screen">
-      <aside className="hidden w-72 shrink-0 flex-col border-r border-sidebar-border bg-sidebar md:flex">
+    <div className="min-h-screen md:flex">
+      <header className="sticky top-0 z-40 grid h-14 grid-cols-[minmax(0,1fr)_auto] items-center border-b border-sidebar-border bg-sidebar px-4 md:hidden">
+        <Link to="/app" className="flex min-w-0 items-center gap-2" onClick={() => setMenuOpen(false)}>
+          <div className="grid size-8 shrink-0 place-items-center rounded-md bg-primary/15 text-primary"><Sparkles className="size-4" /></div>
+          <span className="truncate font-semibold">Planpaste</span>
+        </Link>
+        <Button variant="ghost" size="icon" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
+          {menuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+        </Button>
+      </header>
+      {menuOpen && <button aria-label="Close menu" className="fixed inset-0 top-14 z-30 bg-background/80 md:hidden" onClick={() => setMenuOpen(false)} />}
+      <aside className={`${menuOpen ? "flex" : "hidden"} fixed inset-y-14 right-0 z-40 w-[min(20rem,calc(100vw-2rem))] flex-col border-l border-sidebar-border bg-sidebar shadow-xl md:sticky md:top-0 md:flex md:h-screen md:w-72 md:shrink-0 md:border-l-0 md:border-r md:shadow-none`}>
         <div className="flex items-center justify-between px-4 py-4">
           <Link to="/" className="flex items-center gap-2">
             <div className="grid size-8 place-items-center rounded-md bg-primary/15 text-primary">
@@ -78,14 +92,16 @@ function AppLayout() {
         </div>
 
         <div className="px-3">
-          <Link
+            <Link
             to="/app"
+              onClick={() => setMenuOpen(false)}
             className="flex w-full items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
           >
             <Plus className="size-4" /> New paste
           </Link>
           <Link
             to="/tasks"
+              onClick={() => setMenuOpen(false)}
             activeProps={{ className: "bg-sidebar-accent text-sidebar-accent-foreground" }}
             className="mt-2 flex items-center gap-2 rounded-md px-3 py-2 text-sm text-sidebar-foreground hover:bg-sidebar-accent"
           >
@@ -93,6 +109,7 @@ function AppLayout() {
           </Link>
           <Link
             to="/settings"
+              onClick={() => setMenuOpen(false)}
             activeProps={{ className: "bg-sidebar-accent text-sidebar-accent-foreground" }}
             className="mt-2 flex items-center gap-2 rounded-md px-3 py-2 text-sm text-sidebar-foreground hover:bg-sidebar-accent"
           >
@@ -101,6 +118,7 @@ function AppLayout() {
           {adminCheck?.isAdmin && (
             <Link
               to="/admin"
+                onClick={() => setMenuOpen(false)}
               activeProps={{ className: "bg-sidebar-accent text-sidebar-accent-foreground" }}
               className="mt-2 flex items-center gap-2 rounded-md px-3 py-2 text-sm text-sidebar-foreground hover:bg-sidebar-accent"
             >
@@ -120,6 +138,7 @@ function AppLayout() {
             <div key={s.id} className="group flex items-center gap-1">
               <Link
                 to="/sessions/$sessionId"
+                  onClick={() => setMenuOpen(false)}
                 params={{ sessionId: s.id }}
                 activeProps={{ className: "bg-sidebar-accent text-sidebar-accent-foreground" }}
                 className="flex flex-1 items-center gap-2 rounded-md px-3 py-2 text-sm text-sidebar-foreground hover:bg-sidebar-accent"
@@ -127,13 +146,15 @@ function AppLayout() {
                 <MessageSquareText className="size-3.5 shrink-0 text-muted-foreground" />
                 <span className="truncate">{s.title}</span>
               </Link>
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => remove(s.id)}
-                className="hidden size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-destructive/15 hover:text-destructive group-hover:flex"
+                className="size-8 shrink-0 text-muted-foreground hover:text-destructive md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100"
                 aria-label="Delete session"
               >
                 <Trash2 className="size-3.5" />
-              </button>
+              </Button>
             </div>
           ))}
         </nav>
@@ -145,7 +166,7 @@ function AppLayout() {
         </div>
       </aside>
 
-      <main className="flex-1 overflow-y-auto">
+      <main className="min-w-0 flex-1">
         <Outlet />
       </main>
     </div>
