@@ -94,6 +94,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
     ],
     links: [
+      { rel: "icon", type: "image/png", href: "/favicon.png" },
       { rel: "stylesheet", href: appCss },
       {
         rel: "stylesheet",
@@ -109,13 +110,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             {
               "@type": "Organization",
               name: "Planpaste",
-              url: "https://chat-to-plan-magic.lovable.app",
+              url: "https://magicplan.world",
               email: "hello@planpaste.app",
             },
             {
               "@type": "WebSite",
               name: "Planpaste",
-              url: "https://chat-to-plan-magic.lovable.app",
+              url: "https://magicplan.world",
             },
           ],
         }),
