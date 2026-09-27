@@ -44,16 +44,8 @@ export const extractTasks = createServerFn({ method: "POST" })
       throw new Error("AI extraction is unavailable. Add OPENAI_API_KEY to Vercel.");
     }
 
-    const { generateText } = await import("ai");
-    const { createOpenAI } = await import("@ai-sdk/openai");
-    const openai = createOpenAI({ apiKey });
-
     const now = new Date().toISOString();
-    const { text } = await generateText({
-      model: openai("gpt-4o-mini"),
-      temperature: 0,
-      maxTokens: 4096,
-      prompt: `You extract actionable tasks, deadlines, and commitments from chat transcripts.
+    const prompt = `You extract actionable tasks, deadlines, and commitments from chat transcripts.
 
 Return only valid JSON, with no markdown fences or commentary. Shape:
 {"title":"short 3-7 word summary","tasks":[{"title":"task","details":null,"assignee":null,"said_by":null,"deadline":null}]}
@@ -72,10 +64,30 @@ Rules:
 Chat transcript:
 """
 ${data.text}
-"""`,
-    });
+"""`;
 
     try {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          temperature: 0,
+          messages: [{ role: "user", content: prompt }],
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error("OpenAI API error:", errorData);
+        throw new Error("Failed to extract tasks from OpenAI");
+      }
+
+      const result = await response.json();
+      const text = result.choices?.[0]?.message?.content || "";
       return parseExtractedPlan(text);
     } catch (error) {
       console.error("Failed to parse extraction response", error);
