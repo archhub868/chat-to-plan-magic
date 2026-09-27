@@ -91,12 +91,11 @@ ${colorConfig
 };
 
 const ChartTooltip = RechartsPrimitive.Tooltip;
-type TooltipPayload = NonNullable<React.ComponentProps<typeof RechartsPrimitive.TooltipContent>["payload"]>;
-type LegendPayload = NonNullable<React.ComponentProps<typeof RechartsPrimitive.DefaultLegendContent>["payload"]>;
+type LegendPayload = ReadonlyArray<RechartsPrimitive.LegendPayload>;
 
 const ChartTooltipContent = React.forwardRef<
   HTMLDivElement,
-   React.ComponentProps<typeof RechartsPrimitive.TooltipContent> &
+   RechartsPrimitive.TooltipContentProps<RechartsPrimitive.TooltipValueType, RechartsPrimitive.TooltipNameType> &
     React.ComponentProps<"div"> & {
       hideLabel?: boolean;
       hideIndicator?: boolean;
