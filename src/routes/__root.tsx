@@ -70,7 +70,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       {
         name: "google-site-verification",
-        content: "8DZAWmztcQkWfypthfeL43MAG673VdiMcgVdny_A-G4",
+        content: "c8zQ4ZO0ukrbOhqKvy3RFZM83RNv0m0f0EAsNCCzhmY",
       },
 
       { title: "Planpaste — Turn chats into action plans" },
