@@ -76,8 +76,8 @@ function PrivacyPage() {
           <h2 className="text-lg font-semibold text-foreground">5. Contact Us</h2>
           <p>
             If you have any questions or concerns regarding this Privacy Policy, please contact us at:{" "}
-            <a href="mailto:hello@magicplan.world" className="text-primary underline">
-              hello@magicplan.world
+            <a href="mailto:planpaste@gmail.com" className="text-primary underline">
+              planpaste@gmail.com
             </a>.
           </p>
         </section>
