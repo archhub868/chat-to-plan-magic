@@ -25,7 +25,7 @@ export async function sendResendEmail({
     to: ["planpaste@gmail.com"], 
     // Clicking "Reply" in Gmail will reply directly to the user who filled out the form
     replyTo: email, 
-    subject: `[Planpaste Contact] ${subject}`,
+    subject: subject,
     html: `
       <div style="font-family: sans-serif; padding: 20px; color: #333;">
         <h2 style="color: #4f46e5;">New Contact Message</h2>
