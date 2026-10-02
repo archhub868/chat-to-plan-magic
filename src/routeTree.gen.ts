@@ -18,6 +18,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ReviewsRouteImport } from './routes/reviews'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TrustRouteImport } from './routes/trust'
+import { Route as TryRouteImport } from './routes/try'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
@@ -70,6 +71,11 @@ const TrustRoute = TrustRouteImport.update({
   path: '/trust',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TryRoute = TryRouteImport.update({
+  id: '/try',
+  path: '/try',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/reviews': typeof ReviewsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trust': typeof TrustRoute
+  '/try': typeof TryRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/app': typeof AuthenticatedAppRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -133,6 +140,7 @@ export interface FileRoutesByTo {
   '/reviews': typeof ReviewsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trust': typeof TrustRoute
+  '/try': typeof TryRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/app': typeof AuthenticatedAppRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -152,6 +160,7 @@ export interface FileRoutesById {
   '/reviews': typeof ReviewsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trust': typeof TrustRoute
+  '/try': typeof TryRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/app': typeof AuthenticatedAppRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
@@ -171,6 +180,7 @@ export interface FileRouteTypes {
     | '/reviews'
     | '/sitemap.xml'
     | '/trust'
+    | '/try'
     | '/admin'
     | '/app'
     | '/settings'
@@ -188,6 +198,7 @@ export interface FileRouteTypes {
     | '/reviews'
     | '/sitemap.xml'
     | '/trust'
+    | '/try'
     | '/admin'
     | '/app'
     | '/settings'
@@ -206,6 +217,7 @@ export interface FileRouteTypes {
     | '/reviews'
     | '/sitemap.xml'
     | '/trust'
+    | '/try'
     | '/_authenticated/admin'
     | '/_authenticated/app'
     | '/_authenticated/settings'
@@ -225,6 +237,7 @@ export interface RootRouteChildren {
   ReviewsRoute: typeof ReviewsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TrustRoute: typeof TrustRoute
+  TryRoute: typeof TryRoute
   GuidesMeetingNotesRoute: typeof GuidesMeetingNotesRoute
   GuidesWhatsappTasksRoute: typeof GuidesWhatsappTasksRoute
 }
@@ -292,6 +305,13 @@ declare module '@tanstack/react-router' {
       path: '/trust'
       fullPath: '/trust'
       preLoaderRoute: typeof TrustRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/try': {
+      id: '/try'
+      path: '/try'
+      fullPath: '/try'
+      preLoaderRoute: typeof TryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -375,6 +395,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReviewsRoute: ReviewsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TrustRoute: TrustRoute,
+  TryRoute: TryRoute,
   GuidesMeetingNotesRoute: GuidesMeetingNotesRoute,
   GuidesWhatsappTasksRoute: GuidesWhatsappTasksRoute,
 }
