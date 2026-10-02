@@ -19,9 +19,12 @@ export async function sendResendEmail({
   const resend = new Resend(apiKey);
 
   const { error } = await resend.emails.send({
-    from: "Planpaste Contact Form <onboarding@resend.dev>",
-    to: ["planpaste@gmail.com"],
-    replyTo: email,
+    // Display name and sender address on your verified domain
+    from: "Planpaste <hello@magicplan.world>", 
+    // Target inbox where you want to read submitted messages
+    to: ["planpaste@gmail.com"], 
+    // Clicking "Reply" in Gmail will reply directly to the user who filled out the form
+    replyTo: email, 
     subject: `[Planpaste Contact] ${subject}`,
     html: `
       <div style="font-family: sans-serif; padding: 20px; color: #333;">
