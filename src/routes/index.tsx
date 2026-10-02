@@ -1,9 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowRight, Sparkles, ListChecks, Bell, Share2 } from "lucide-react";
+import { ArrowRight, Sparkles, ListChecks, Bell, Share2, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   ssr: false,
@@ -81,6 +80,12 @@ function Landing() {
               className="rounded-md px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground"
             >
               WhatsApp guide
+            </Link>
+            <Link
+              to="/guides/meeting-notes"
+              className="rounded-md px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground"
+            >
+              Meeting notes guide
             </Link>
             <Link
               to="/contact"
@@ -176,6 +181,9 @@ function Landing() {
             </Link>
             <Link to="/guides/whatsapp-tasks" className="transition-colors hover:text-foreground">
               WhatsApp guide
+            </Link>
+            <Link to="/guides/meeting-notes" className="transition-colors hover:text-foreground">
+              Meeting notes guide
             </Link>
             <Link to="/contact" className="transition-colors hover:text-foreground">
               Contact
