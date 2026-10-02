@@ -65,6 +65,12 @@ function Landing() {
               About
             </Link>
             <Link
+              to="/faq"
+              className="rounded-md px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground"
+            >
+              FAQ
+            </Link>
+            <Link
               to="/reviews"
               className="rounded-md px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground"
             >
@@ -75,12 +81,6 @@ function Landing() {
               className="rounded-md px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground"
             >
               WhatsApp guide
-            </Link>
-            <Link
-              to="/guides/meeting-notes"
-              className="rounded-md px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground"
-            >
-              Meeting notes guide
             </Link>
             <Link
               to="/contact"
@@ -115,10 +115,10 @@ function Landing() {
           </p>
           <div className="mt-8 flex justify-center gap-3">
             <Link
-              to={isAuthed ? "/app" : "/try"}
+              to={isAuthed ? "/app" : "/auth"}
               className="group inline-flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
-              {isAuthed ? "Open app" : "Try it free"}{" "}
+              {isAuthed ? "Open app" : "Start free"}{" "}
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
@@ -168,14 +168,14 @@ function Landing() {
             <Link to="/about" className="transition-colors hover:text-foreground">
               About
             </Link>
+            <Link to="/faq" className="transition-colors hover:text-foreground">
+              FAQ
+            </Link>
             <Link to="/reviews" className="transition-colors hover:text-foreground">
               Reviews
             </Link>
             <Link to="/guides/whatsapp-tasks" className="transition-colors hover:text-foreground">
               WhatsApp guide
-            </Link>
-            <Link to="/guides/meeting-notes" className="transition-colors hover:text-foreground">
-              Meeting notes guide
             </Link>
             <Link to="/contact" className="transition-colors hover:text-foreground">
               Contact
