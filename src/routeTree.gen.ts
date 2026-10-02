@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ReviewsRouteImport } from './routes/reviews'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TrustRouteImport } from './routes/trust'
@@ -21,6 +22,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks'
+import { Route as GuidesMeetingNotesRouteImport } from './routes/guides.meeting-notes'
 import { Route as GuidesWhatsappTasksRouteImport } from './routes/guides.whatsapp-tasks'
 import { Route as AuthenticatedSessionsSessionIdRouteImport } from './routes/_authenticated/sessions.$sessionId'
 
@@ -46,6 +48,11 @@ const AuthRoute = AuthRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReviewsRoute = ReviewsRouteImport.update({
@@ -83,6 +90,11 @@ const AuthenticatedTasksRoute = AuthenticatedTasksRouteImport.update({
   path: '/tasks',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const GuidesMeetingNotesRoute = GuidesMeetingNotesRouteImport.update({
+  id: '/guides/meeting-notes',
+  path: '/guides/meeting-notes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GuidesWhatsappTasksRoute = GuidesWhatsappTasksRouteImport.update({
   id: '/guides/whatsapp-tasks',
   path: '/guides/whatsapp-tasks',
@@ -100,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
+  '/privacy': typeof PrivacyRoute
   '/reviews': typeof ReviewsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trust': typeof TrustRoute
@@ -107,6 +120,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AuthenticatedAppRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/tasks': typeof AuthenticatedTasksRoute
+  '/guides/meeting-notes': typeof GuidesMeetingNotesRoute
   '/guides/whatsapp-tasks': typeof GuidesWhatsappTasksRoute
   '/sessions/$sessionId': typeof AuthenticatedSessionsSessionIdRoute
 }
@@ -115,6 +129,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
+  '/privacy': typeof PrivacyRoute
   '/reviews': typeof ReviewsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trust': typeof TrustRoute
@@ -122,6 +137,7 @@ export interface FileRoutesByTo {
   '/app': typeof AuthenticatedAppRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/tasks': typeof AuthenticatedTasksRoute
+  '/guides/meeting-notes': typeof GuidesMeetingNotesRoute
   '/guides/whatsapp-tasks': typeof GuidesWhatsappTasksRoute
   '/sessions/$sessionId': typeof AuthenticatedSessionsSessionIdRoute
 }
@@ -132,6 +148,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
+  '/privacy': typeof PrivacyRoute
   '/reviews': typeof ReviewsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trust': typeof TrustRoute
@@ -139,6 +156,7 @@ export interface FileRoutesById {
   '/_authenticated/app': typeof AuthenticatedAppRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
+  '/guides/meeting-notes': typeof GuidesMeetingNotesRoute
   '/guides/whatsapp-tasks': typeof GuidesWhatsappTasksRoute
   '/_authenticated/sessions/$sessionId': typeof AuthenticatedSessionsSessionIdRoute
 }
@@ -149,6 +167,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/contact'
+    | '/privacy'
     | '/reviews'
     | '/sitemap.xml'
     | '/trust'
@@ -156,6 +175,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/settings'
     | '/tasks'
+    | '/guides/meeting-notes'
     | '/guides/whatsapp-tasks'
     | '/sessions/$sessionId'
   fileRoutesByTo: FileRoutesByTo
@@ -164,6 +184,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/contact'
+    | '/privacy'
     | '/reviews'
     | '/sitemap.xml'
     | '/trust'
@@ -171,6 +192,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/settings'
     | '/tasks'
+    | '/guides/meeting-notes'
     | '/guides/whatsapp-tasks'
     | '/sessions/$sessionId'
   id:
@@ -180,6 +202,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/contact'
+    | '/privacy'
     | '/reviews'
     | '/sitemap.xml'
     | '/trust'
@@ -187,6 +210,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app'
     | '/_authenticated/settings'
     | '/_authenticated/tasks'
+    | '/guides/meeting-notes'
     | '/guides/whatsapp-tasks'
     | '/_authenticated/sessions/$sessionId'
   fileRoutesById: FileRoutesById
@@ -197,9 +221,11 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
+  PrivacyRoute: typeof PrivacyRoute
   ReviewsRoute: typeof ReviewsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TrustRoute: typeof TrustRoute
+  GuidesMeetingNotesRoute: typeof GuidesMeetingNotesRoute
   GuidesWhatsappTasksRoute: typeof GuidesWhatsappTasksRoute
 }
 
@@ -238,6 +264,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reviews': {
@@ -289,6 +322,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTasksRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/guides/meeting-notes': {
+      id: '/guides/meeting-notes'
+      path: '/guides/meeting-notes'
+      fullPath: '/guides/meeting-notes'
+      preLoaderRoute: typeof GuidesMeetingNotesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/guides/whatsapp-tasks': {
       id: '/guides/whatsapp-tasks'
       path: '/guides/whatsapp-tasks'
@@ -331,9 +371,11 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
+  PrivacyRoute: PrivacyRoute,
   ReviewsRoute: ReviewsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TrustRoute: TrustRoute,
+  GuidesMeetingNotesRoute: GuidesMeetingNotesRoute,
   GuidesWhatsappTasksRoute: GuidesWhatsappTasksRoute,
 }
 export const routeTree = rootRouteImport

@@ -10,4 +10,5 @@
 - [Contact](/contact): Get in touch with the Planpaste team.
 - [Trust & Security](/trust): How Planpaste handles security, privacy, and your data.
 - [WhatsApp task extractor guide](/guides/whatsapp-tasks): Step-by-step guide to turning WhatsApp group chats into action plans.
+- [Meeting notes to action items guide](/guides/meeting-notes): Step-by-step guide to turning meeting notes into a task list with owners and deadlines.
 
