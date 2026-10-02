@@ -2,6 +2,11 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
+function logAndThrow(scope: string, error: unknown, userMessage: string): never {
+  console.error(`[${scope}]`, error);
+  throw new Error(userMessage);
+}
+
 export const extractTasks = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => z.object({ text: z.string().min(1).max(50000) }).parse(input))

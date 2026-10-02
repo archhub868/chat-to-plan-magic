@@ -87,4 +87,5 @@ ${data.text}
     } catch (error) {
       console.error("Failed to parse extraction response", error);
       return { title: "Untitled chat", tasks: [] };
+    }
 }
