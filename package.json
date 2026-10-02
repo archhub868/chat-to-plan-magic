@@ -48,11 +48,11 @@
     "@supabase/supabase-js": "^2.108.2",
     "@tailwindcss/vite": "^4.2.1",
     "@tanstack/react-query": "^5.83.0",
-    "@tanstack/react-router": "^1.170.39",
+    "@tanstack/react-router": "1.170.41",
     "@tanstack/react-router-devtools": "^1.167.0",
-    "@tanstack/react-start": "^1.168.58",
+    "@tanstack/react-start": "1.168.60",
     "@tanstack/router-core": "^1.171.32",
-    "@tanstack/router-plugin": "^1.168.40",
+    "@tanstack/router-plugin": "1.168.42",
     "ai": "^6.0.207",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -98,6 +98,8 @@
     "vite": "^8.0.16"
   },
   "resolutions": {
-    "js-yaml": "^4.3.1", "browserslist": ">4.28.6", "baseline-browser-mapping": ">=2.11.0"
+    "js-yaml": "^4.3.1",
+    "browserslist": ">4.28.6",
+    "baseline-browser-mapping": ">=2.11.0"
   }
 }
