@@ -180,6 +180,21 @@ export type Database = {
           },
         ]
       }
+      trial_parses: {
+        Row: {
+          created_at: string
+          visitor_hash: string
+        }
+        Insert: {
+          created_at?: string
+          visitor_hash: string
+        }
+        Update: {
+          created_at?: string
+          visitor_hash?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string

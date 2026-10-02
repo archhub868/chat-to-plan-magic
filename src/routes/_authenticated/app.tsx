@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient } from "@tanstack/react-query";
 import { extractTasks, saveSession } from "@/lib/tasks.functions";
@@ -71,6 +71,29 @@ function PastePage() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("planpaste_trial_draft");
+    if (!saved) return;
+    localStorage.removeItem("planpaste_trial_draft");
+    try {
+      const d = JSON.parse(saved) as { text: string; result: { title: string; tasks: Draft[] } };
+      setText(d.text);
+      setTitle(d.result.title);
+      setDrafts(
+        d.result.tasks.map((t) => ({
+          title: t.title,
+          details: t.details ?? null,
+          assignee: t.assignee ?? null,
+          said_by: t.said_by ?? null,
+          deadline: t.deadline ?? null,
+        })),
+      );
+      toast.message("Your trial plan is ready — save it to keep it.");
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   async function onFile(file: File) {
     if (file.size > MAX_FILE_BYTES) {

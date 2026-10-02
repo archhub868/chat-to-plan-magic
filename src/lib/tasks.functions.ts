@@ -2,33 +2,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
-const ExtractedTask = z.object({
-  title: z.string(),
-  details: z.string().nullable().optional(),
-  assignee: z.string().nullable().optional(),
-  said_by: z.string().nullable().optional(),
-  deadline: z.string().nullable().optional(),
-});
-
-const ExtractedPlan = z.object({
-  title: z.string().min(1).default("Untitled chat"),
-  tasks: z.array(ExtractedTask).default([]),
-});
-
-function parseExtractedPlan(text: string) {
-  const cleaned = text
-    .trim()
-    .replace(/^```(?:json)?\s*/i, "")
-    .replace(/```$/i, "")
-    .trim();
-  const firstBrace = cleaned.indexOf("{");
-  const lastBrace = cleaned.lastIndexOf("}");
-  if (firstBrace === -1 || lastBrace === -1 || lastBrace <= firstBrace) {
-    throw new Error("AI response did not contain a JSON object");
-  }
-  return ExtractedPlan.parse(JSON.parse(cleaned.slice(firstBrace, lastBrace + 1)));
-}
-
 function logAndThrow(scope: string, error: unknown, userMessage: string): never {
   console.error(`[${scope}]`, error);
   throw new Error(userMessage);
@@ -38,61 +11,41 @@ export const extractTasks = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => z.object({ text: z.string().min(1).max(50000) }).parse(input))
   .handler(async ({ data }) => {
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      console.error("[extractTasks] OPENAI_API_KEY not configured");
-      throw new Error("AI extraction is unavailable. Add OPENAI_API_KEY to Vercel.");
+    const { runExtraction } = await import("./tasks.server");
+    return runExtraction(data);
+  });
+
+export const extractTasksTrial = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) =>
+    z.object({ text: z.string().min(1).max(20000), visitorId: z.string().min(8).max(100) }).parse(input),
+  )
+  .handler(async ({ data }) => {
+    const { getRequestHeader } = await import("@tanstack/react-start/server");
+    const ip =
+      getRequestHeader("cf-connecting-ip") ||
+      getRequestHeader("x-forwarded-for")?.split(",")[0]?.trim() ||
+      "unknown";
+    const enc = new TextEncoder();
+    const hash = async (v: string) =>
+      Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", enc.encode(v))))
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+    const ipHash = "ip:" + (await hash(ip));
+    const visitorHash = "v:" + (await hash(data.visitorId));
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: existing } = await supabaseAdmin
+      .from("trial_parses")
+      .select("visitor_hash")
+      .in("visitor_hash", [ipHash, visitorHash]);
+    if (existing && existing.length > 0) {
+      return { limitReached: true as const, title: "", tasks: [] };
     }
-
-    const now = new Date().toISOString();
-    const prompt = `You extract actionable tasks, deadlines, and commitments from chat transcripts.
-
-Return only valid JSON, with no markdown fences or commentary. Shape:
-{"title":"short 3-7 word summary","tasks":[{"title":"task","details":null,"assignee":null,"said_by":null,"deadline":null}]}
-
-Current datetime (ISO): ${now}
-
-Rules:
-- Only include real action items, commitments, or decisions (not small talk).
-- "title": short imperative phrase ("Send Q3 report").
-- "details": optional one-sentence context.
-- "assignee": person who must do it (name as written in the chat, or "me").
-- "said_by": who originally said/committed to it.
-- "deadline": ISO 8601 timestamp if a date/time is clearly stated or strongly implied (resolve relative like "tomorrow" / "Friday" using the current datetime above). Otherwise null.
-- Return [] if there are no real tasks.
-
-Chat transcript:
-"""
-${data.text}
-"""`;
-
-    try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "gpt-4o-mini",
-          temperature: 0,
-          messages: [{ role: "user", content: prompt }],
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error("OpenAI API error:", errorData);
-        throw new Error("Failed to extract tasks from OpenAI");
-      }
-
-      const result = await response.json();
-      const text = result.choices?.[0]?.message?.content || "";
-      return parseExtractedPlan(text);
-    } catch (error) {
-      console.error("Failed to parse extraction response", error);
-      return { title: "Untitled chat", tasks: [] };
-    }
+    await supabaseAdmin
+      .from("trial_parses")
+      .upsert([{ visitor_hash: ipHash }, { visitor_hash: visitorHash }]);
+    const { runExtraction } = await import("./tasks.server");
+    const result = await runExtraction(data);
+    return { limitReached: false as const, ...result };
   });
 
 export const saveSession = createServerFn({ method: "POST" })

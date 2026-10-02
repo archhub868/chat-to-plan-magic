@@ -115,10 +115,10 @@ function Landing() {
           </p>
           <div className="mt-8 flex justify-center gap-3">
             <Link
-              to={isAuthed ? "/app" : "/auth"}
+              to={isAuthed ? "/app" : "/try"}
               className="group inline-flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
-              {isAuthed ? "Open app" : "Start free"}{" "}
+              {isAuthed ? "Open app" : "Try it free"}{" "}
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
