@@ -3,6 +3,9 @@
   "private": true,
   "sideEffects": false,
   "type": "module",
+  "allowScripts": {
+    "esbuild": true
+  },
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
@@ -96,6 +99,7 @@
     "nitro": "3.0.260603-beta",
     "postgres": "^3.4.9",
     "prettier": "^3.7.3",
+    "tsx": "^4.19.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
     "vite": "^8.0.16"
@@ -103,6 +107,12 @@
   "resolutions": {
     "js-yaml": "^4.3.1",
     "browserslist": ">4.28.6",
-    "baseline-browser-mapping": ">=2.11.0"
+    "baseline-browser-mapping": ">=2.11.0",
+    "@esbuild-kit/core-utils": "npm:tsx@^4.19.3",
+    "@esbuild-kit/esm-loader": "npm:tsx@^4.19.3"
+  },
+  "overrides": {
+    "@esbuild-kit/core-utils": "npm:tsx@^4.19.3",
+    "@esbuild-kit/esm-loader": "npm:tsx@^4.19.3"
   }
 }
